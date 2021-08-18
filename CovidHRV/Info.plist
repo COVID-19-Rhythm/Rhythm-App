@@ -14,5 +14,7 @@
 		<string>Montserrat-SemiBold.ttf</string>
 		<string>Montserrat-Thin.ttf</string>
 	</array>
+	<key>NSHealthShareUsageDescription</key>
+	<string>To compare data</string>
 </dict>
 </plist>

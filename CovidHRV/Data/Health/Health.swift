@@ -10,18 +10,20 @@ import HealthKit
 class Health: ObservableObject {
     
     @Published var healthStore = HKHealthStore()
-    @Published var risk = Risk(id: "demo", risk: 1.0, explanation: [Explanation(image: .exclamationmarkCircle, explanation: "Explain it here!!"), Explanation(image: .questionmarkCircle, explanation: "Explain it here?"), Explanation(image: .circle, explanation: "Explain it here.")])
-    @Published var readData: [HKQuantityTypeIdentifier] =  [.heartRateVariabilitySDNN,
-                                .restingHeartRate,
-                                .walkingHeartRateAverage,
-                                .heartRate,
-                                .walkingSpeed,
-                                .respiratoryRate]
+    @Published var risk = Risk(id: "demo", risk: 0.2, explanation: [Explanation(image: .exclamationmarkCircle, explanation: "Explain it here!!"), Explanation(image: .questionmarkCircle, explanation: "Explain it here?"), Explanation(image: .circle, explanation: "Explain it here.")])
+//    @Published var readData: [HKQuantityTypeIdentifier] =  [.heartRateVariabilitySDNN,
+//                                                            .restingHeartRate,
+//                                                            .walkingHeartRateAverage,
+//                                                            .heartRate,
+//                                                            .walkingSpeed,
+//                                                            .respiratoryRate, .oxygenSaturation]
+    @Published var readData: [HKQuantityTypeIdentifier] =  [.heartRate]
     @Published var healthData = [HealthData]()
     @Published var tempHealthData = HealthData(id: UUID().uuidString, type: .Feeling, title: "", text: "", date: Date(), data: 0.0)
     @Published var healthChartData = ChartData(values: [("", 0.0)])
     
     func getHealthData(type: HKQuantityTypeIdentifier, dateDistanceType: DateDistanceType, dateDistance: Int, completionHandler: @escaping ([HealthData]) -> Void) {
+        DispatchQueue.main.async {
         let data = [HealthData]()
         let calendar = NSCalendar.current
         var anchorComponents = calendar.dateComponents([.day, .month, .year, .weekday], from: NSDate() as Date)
@@ -69,7 +71,7 @@ class Health: ObservableObject {
                         
                         let date = statistics.startDate
                         //for: E.g. for steps it's HKUnit.count()
-                        let value = quantity.is(compatibleWith: .percent()) ? quantity.doubleValue(for: .percent()) : quantity.is(compatibleWith: .count()) ? quantity.doubleValue(for: .count()) : quantity.is(compatibleWith: .inch()) ? quantity.doubleValue(for: .inch()) : quantity.doubleValue(for: HKUnit.mile().unitDivided(by: HKUnit.hour()))
+                        let value = quantity.is(compatibleWith: .percent()) ? quantity.doubleValue(for: .percent()) : quantity.is(compatibleWith: .count()) ? quantity.doubleValue(for: .count()) : quantity.is(compatibleWith: .inch()) ? quantity.doubleValue(for: .inch()) : quantity.is(compatibleWith: HKUnit.count().unitDivided(by: HKUnit.minute())) ? quantity.doubleValue(for: HKUnit.count().unitDivided(by: HKUnit.minute())) : quantity.doubleValue(for: HKUnit.mile().unitDivided(by: HKUnit.hour()))
                         //data.append(UserData(id: UUID().uuidString, type: .Balance, title: type.rawValue, text: "", date: date, data: value))
                         
                         self.healthData.append(HealthData(id: UUID().uuidString, type: .Health, title: type.rawValue, text: "", date: date, data: value))
@@ -84,13 +86,18 @@ class Health: ObservableObject {
             
             completionHandler(data)
         }
-        convertHealthDataToChart(healthData: healthData) { _ in
+            self.convertHealthDataToChart(healthData: self.healthData) { _ in
             
         }
-        healthStore.execute(query3)
+            self.healthStore.execute(query3)
         
-        
+        }
     }
+        
+    func average(numbers: [Double]) -> Double {
+       // print(numbers)
+       return Double(numbers.reduce(0,+))/Double(numbers.count)
+   }
     func convertHealthDataToChart(healthData: [HealthData], completionHandler: @escaping (ChartData) -> Void) {
         
         for data in healthData {

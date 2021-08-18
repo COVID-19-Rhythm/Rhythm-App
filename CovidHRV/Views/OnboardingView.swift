@@ -11,7 +11,7 @@ import HealthKit
 
 struct OnboardingView: View {
     let healthStore = HKHealthStore()
-    @State var onboardingViews = [Onboarding(id: UUID(), image: "privacy", title: "Privacy First", description: "Zero data leaves your device unless you approve sharing your data to further research."), Onboarding(id: UUID(), image: "data1", title: "Types of Data", description: "Tap below to learn how you can use your data."), Onboarding(id: UUID(), image: "chat2", title: "On Device Machine Learning", description: "Fine-tune your machine learning model on device to learn when you could possibly be sick."), Onboarding(id: UUID(), image: "chat2", title: "Simply Rate How You Feel", description: "Rating how your feeling further trains your model to understand how you feel and to possibly alert to potential signs of disease."), Onboarding(id: UUID(), image: "chat2", title: "You Know Yourself Best", description: "Even if you receive a notification that you are possibly catching an illness, its always up to you whether you choose to self isolate or ignore the alert.")]
+    @State var onboardingViews = [Onboarding(id: UUID(), image: "privacy", title: "Privacy First", description: "Zero data leaves your device unless you approve sharing your data to further research."), Onboarding(id: UUID(), image: "data", title: "Types of Data", description: "Tap below to learn how you can use your data."), Onboarding(id: UUID(), image: "ml", title: "On Device Machine Learning", description: "Fine-tune your machine learning model on device to learn when you could possibly be sick."), Onboarding(id: UUID(), image: "feel", title: "Simply Rate How You Feel", description: "Rating how your feeling further trains your model to understand how you feel and to possibly alert to potential signs of disease."), Onboarding(id: UUID(), image: "you", title: "You Know Yourself Best", description: "Even if you receive a notification that you are possibly catching an illness, its always up to you whether you choose to self isolate or ignore the alert.")]
     @State var slideNum = 0
     @Binding var isOnboarding: Bool
     @Binding var isOnboarding2: Bool
@@ -38,15 +38,17 @@ struct OnboardingView: View {
                 //setting.onOff = false
             }) {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 25.0)
-                        .foregroundColor(Color(.lightGray))
-                        .frame(height: 75)
-                        .padding()
+//                    RoundedRectangle(cornerRadius: 25.0)
+//                        .foregroundColor(Color(.lightGray))
+//                        .frame(height: 75)
+//                        .padding()
                     Text("No")
                         .font(.custom("Poppins-Bold", size: 18, relativeTo: .headline))
                         .foregroundColor(.white)
                 }
             } .buttonStyle(CTAButtonStyle())
+                    .frame(width: .infinity)
+                    .padding()
             }
             Button(action: {
                 if onboardingViews[slideNum].title.contains("Noti") {
@@ -81,15 +83,17 @@ struct OnboardingView: View {
                 
             }) {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 25.0)
-                        .foregroundColor(Color("teal"))
-                        .frame(height: 75)
-                        .padding()
+//                    RoundedRectangle(cornerRadius: 25.0)
+//                        .foregroundColor(Color("teal"))
+//                        .frame(height: 75)
+//                        .padding()
                     Text(onboardingViews[slideNum].title.contains("Can") ? "Yes" : "Continue")
                         .font(.custom("Poppins-Bold", size: 18, relativeTo: .headline))
                         .foregroundColor(.white)
                 }
             } .buttonStyle(CTAButtonStyle())
+                .frame(width: .infinity)
+                .padding()
             
         }
     }

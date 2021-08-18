@@ -22,7 +22,7 @@ enum DataType: String, Codable, CaseIterable {
     case HRV = "HRV"
     case Health = "Health"
     case Feeling = "Feeling"
-    
+    case Risk = "Risk"
 }
 
 struct CodableRisk: Identifiable, Codable, Hashable {
@@ -38,4 +38,14 @@ struct Risk: Hashable {
 struct Explanation: Hashable {
     var image: SFSymbol
     var explanation: String
+}
+
+enum DayOfWeek: Int, Codable, CaseIterable  {
+    case Monday = 0
+    case Tuesday = 1
+    case Wednesday = 2
+    case Thursday = 3
+    case Friday = 4
+    case Saturday = 5
+    case Sunday = 6
 }

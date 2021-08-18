@@ -11,10 +11,29 @@ import SwiftUI
 import CoreML
 import CreateML
 import TabularData
-
+import HealthKit
 class ML: ObservableObject {
     @Published var mlData = ModelResponse(type: "", predicted: [Double](), actual: [Double](), accuracy: 0.0)
     
+    func exportDataToCSV(data: [HealthData], completionHandler: @escaping (Bool) -> Void) {
+        var trainingData = DataFrame()
+        let filteredToHeartRate = data.filter { data in
+            return data.title == HKQuantityTypeIdentifier.heartRate.rawValue
+        }
+        let filteredToNight = filteredToHeartRate.filter { data in
+            return data.date.get(.hour) >  12 && data.date.get(.hour) <  8
+        }
+        let nightlyHeartRateColumn = Column(name: "Heartrate", contents: filteredToNight)
+        trainingData.append(column: nightlyHeartRateColumn)
+        do {
+        try trainingData.writeCSV(to: getDocumentsDirectory().appendingPathComponent("A.csv"))
+            //print(getDocumentsDirectory().appendingPathComponent("A.csv").dataRepresentation)
+        } catch {
+            print(error)
+            
+        }
+        completionHandler(true)
+    }
     func trainCompareOnDevice(userData: [HealthData], target: String, target2: String, completionHandler: @escaping (ModelResponse) -> Void) {
         var trainingData = DataFrame()
         let filteredToRemoveNan = userData.filter { data in
@@ -114,8 +133,15 @@ class ML: ObservableObject {
 
     }
     func average(numbers: [Double]) -> Double {
-        // print(numbers)
-        return Double(numbers.reduce(0,+))/Double(numbers.count)
+       // print(numbers)
+       return Double(numbers.reduce(0,+))/Double(numbers.count)
+   }
+    func getDocumentsDirectory() -> URL {
+        // find all possible documents directories for this user
+        let paths = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
+        
+        // just send back the first one, which ought to be the only one
+        return paths[0]
     }
 }
 #endif

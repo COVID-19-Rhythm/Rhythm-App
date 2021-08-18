@@ -17,7 +17,7 @@ struct RiskCardView: View {
     var body: some View {
         VStack {
             HStack {
-                NavigationLink(destination: EmptyView()) {
+                NavigationLink(destination: DataView(health: health)) {
                  
                     Image(systemSymbol: .chartBar)
                         .font(.title)
@@ -26,7 +26,9 @@ struct RiskCardView: View {
                     .font(.custom("Poppins-Bold", size: 18, relativeTo: .headline))
                 Spacer()
                 Button(action: {
+                    withAnimation(.easeOut) {
                     explain.toggle()
+                    }
                 }) {
                     Image(systemSymbol: .questionmarkCircle)
                         .font(.largeTitle)
@@ -40,6 +42,9 @@ struct RiskCardView: View {
                
                 
             if explain {
+                ZStack {
+                    Color(uiColor: .systemBackground)
+                    VStack {
                 LazyVGrid(columns: [GridItem(), GridItem()]) {
                 ForEach(health.risk.explanation, id: \.self) { value in
                     
@@ -53,12 +58,14 @@ struct RiskCardView: View {
                     }
                 .padding(.top)
                 }
-                }
+                } .transition(.move(edge: .top))
                 Button(action: {
                     learnMore.toggle()
                 }) {
                     Text("Learn More")
                         .font(.custom("Poppins-Bold", size: 18, relativeTo: .headline))
+                } .transition(.move(edge: .top))
+            }
                 }
             }
         } .padding()

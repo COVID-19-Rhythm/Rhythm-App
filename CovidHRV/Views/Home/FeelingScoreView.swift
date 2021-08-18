@@ -23,9 +23,11 @@ struct FeelingScoreInputView: View {
             ForEach(1...5, id:\.self) { i in
                 Spacer()
                 Button(action: {
+                    withAnimation(.easeOut) {
                     health.tempHealthData = HealthData(id: UUID().uuidString, type: .Feeling, title: health.tempHealthData.id, text: "", date: Date(), data: Double(i))
                     health.healthData.append(health.tempHealthData)
                     tapped = true
+                    }
                 }) {
                  
                 Text(String(i))

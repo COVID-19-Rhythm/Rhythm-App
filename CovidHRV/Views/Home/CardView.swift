@@ -13,7 +13,7 @@ struct CardView: View {
         ZStack {
             RoundedRectangle(cornerRadius: 25.0)
                 .foregroundColor(Color(uiColor: .systemGroupedBackground))
-            
+                .frame(width: .infinity)
             HStack {
                 Image(card.image)
                     .resizable()
@@ -24,11 +24,13 @@ struct CardView: View {
                         Spacer()
                     Text(card.title)
                         .font(.custom("Poppins-Bold", size: 18, relativeTo: .headline))
-                    }
+                        .multilineTextAlignment(.trailing)
+                    } .padding(.bottom)
                     HStack {
                         Spacer()
                     Text(card.description)
                         .font(.custom("Poppins-Bold", size: 14, relativeTo: .headline))
+                        .multilineTextAlignment(.trailing)
                 }
                     HStack {
                         Spacer()
@@ -37,8 +39,8 @@ struct CardView: View {
                     } .buttonStyle(CTAButtonStyle())
                         
                     }
-                } .padding()
-            }
+                } .padding(.trailing)
+            } .padding(.vertical)
         }
     }
 }
