@@ -16,7 +16,7 @@
 <h2>Privacy First<h2>
 <body> Zero data leaves your device unless you approve sharing your data to further research.<body> 
 
-<h2>On-device Machine Learning<h2>
+<h2>On-Device Machine Learning<h2>
 <body> Fine-tune your machine learning model on device to learn when you could possibly be sick.<body> 
 
 <h2>You Know Yourself Best<h2>
