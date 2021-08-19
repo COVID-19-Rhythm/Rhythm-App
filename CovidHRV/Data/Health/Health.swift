@@ -8,7 +8,7 @@
 import SwiftUI
 import HealthKit
 class Health: ObservableObject {
-    
+    @Published var codableRisk = [CodableRisk(id: UUID().uuidString, date: Date(), risk: 0.0, explanation: [String]())]
     @Published var healthStore = HKHealthStore()
     @Published var risk = Risk(id: "demo", risk: 0.2, explanation: [Explanation(image: .exclamationmarkCircle, explanation: "Explain it here!!"), Explanation(image: .questionmarkCircle, explanation: "Explain it here?"), Explanation(image: .circle, explanation: "Explain it here.")])
 //    @Published var readData: [HKQuantityTypeIdentifier] =  [.heartRateVariabilitySDNN,
@@ -105,6 +105,13 @@ class Health: ObservableObject {
             
         }
         completionHandler(healthChartData)
+    }
+    func getDocumentsDirectory() -> URL {
+        // find all possible documents directories for this user
+        let paths = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
+        
+        // just send back the first one, which ought to be the only one
+        return paths[0]
     }
 }
 

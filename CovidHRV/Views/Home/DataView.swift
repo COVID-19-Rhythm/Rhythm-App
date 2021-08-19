@@ -25,9 +25,7 @@ struct DataView: View {
                 .padding()
                 .onAppear() {
                     loadData  { (score) in
-                        average = health.average(numbers: health.healthData.filter { data in
-                            return data.type == .Health && data.data != 21
-                        }.map{$0.data})
+                        average = health.average(numbers: health.codableRisk.map{Double($0.risk)})
                         
                     }
                     let maximum =  ChartData(values: [("", 0.0)])
@@ -62,12 +60,8 @@ struct DataView: View {
                     
                     //refresh = true
                     loadData  { (score) in
-                        let numbers = health.healthData.filter { data in
-                            return data.type == .Risk && data.data != 21
-                        }.map{$0.data}
-                        print(numbers)
-                        average = health.average(numbers: numbers)
-
+                        average = health.average(numbers: health.codableRisk.map{Double($0.risk)})
+                        
                     }
                     let maximum =  ChartData(values: [("", 0.0)])
                    
@@ -128,7 +122,7 @@ struct DataView: View {
         data = ChartData(values: [("", 0.0)])
         
         
-        let filtered = health.healthData.filter { data in
+        let filtered = health.codableRisk.filter { data in
             return data.date.get(.weekOfYear) == date.get(.weekOfYear) && date.get(.year) == data.date.get(.year)
         }
         
@@ -138,18 +132,16 @@ struct DataView: View {
             
        
             let filteredDay = filtered.filter { data in
-                return data.date.get(.hour) == day
+                return data.date.get(.day) == day
             }
-            let risk = filteredDay.filter { data in
-                return  data.type == .Risk
-            }
+            
         
             
             
 
             var scores = [Double]()
             
-            let averageScore =  health.average(numbers: risk.map{$0.data})
+            let averageScore =  health.average(numbers: filteredDay.map{$0.risk})
         
             scorePoints.points.append(("\(DayOfWeek.init(rawValue: day) ?? .Monday)", averageScore))
             

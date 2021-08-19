@@ -27,6 +27,7 @@ enum DataType: String, Codable, CaseIterable {
 
 struct CodableRisk: Identifiable, Codable, Hashable {
     var id: String
+    var date: Date
     var risk: CGFloat
     var explanation: [String]
 }

@@ -84,19 +84,19 @@ struct HalvedCircularBar: View {
             ZStack {
                 Circle()
                     .trim(from: 0.0, to: 0.705)
-                    .stroke(Color(progress > 0.8 ? "red" : "blue"), lineWidth: 20)
+                    .stroke(Color(progress > 0.8 ? "red" : "green"), lineWidth: 20)
                     .opacity(0.4)
                     .frame(width: 200, height: 200)
                     .rotationEffect(Angle(degrees: -215))
                 Circle()
                     .trim(from: min, to: max)
-                    .stroke(Color(progress > 0.8 ? "red" : "blue"), lineWidth: 20)
+                    .stroke(Color(progress > 0.8 ? "red" : "green"), lineWidth: 20)
                     .frame(width: 200, height: 200)
                     .rotationEffect(Angle(degrees: -215))
                
                 Text("\(Int((self.progress)*100))%")
                     .font(.custom("Poppins-Bold", size: 20, relativeTo: .headline))
-                    .foregroundColor(Color(progress > 0.8 ? "red" : "blue"))
+                    .foregroundColor(Color(progress > 0.8 ? "red" : "green"))
                 VStack {
                     Spacer()
                     HStack {
