@@ -114,6 +114,32 @@ class Health: ObservableObject {
 }
     }
     func getRiskScore(bedTime: Int, wakeUpTime: Int) -> (Risk, [CodableRisk]) {
+        
+        var medianHeartrate = 0.0
+        let url3 = getDocumentsDirectory().appendingPathComponent("risk.txt")
+        do {
+            
+            let input = try String(contentsOf: url3)
+            
+            
+            let jsonData = Data(input.utf8)
+            do {
+                let decoder = JSONDecoder()
+                
+                do {
+                    let codableRisk = try decoder.decode([CodableRisk].self, from: jsonData)
+                    
+                    medianHeartrate = codableRisk.map{Int($0.risk)}.median()
+                    
+                 
+                } catch {
+                    print(error.localizedDescription)
+                }
+            }
+        } catch {
+            
+        }
+        
         let filteredToNight = healthData.filter {
             return $0.date.get(.hour) > bedTime && $0.date.get(.hour) < wakeUpTime
         }
@@ -130,7 +156,7 @@ class Health: ObservableObject {
             heartRates.append(average(numbers: filteredToHour.map{$0.data}))
             dates.append(filteredToHour.last?.date ?? Date())
         }
-        let riskScore = average(numbers: heartRates)
+        let riskScore = average(numbers: heartRates) > medianHeartrate + 4 ? 1 : 0
         let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: [Explanation]())
         self.risk = risk
         codableRisk.append(CodableRisk(id: risk.id, date: dates.last ?? Date(), risk: risk.risk, explanation: [String]()))

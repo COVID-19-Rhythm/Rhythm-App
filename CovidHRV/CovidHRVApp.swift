@@ -120,6 +120,30 @@ func backgroundDelivery() {
 }
 }
 func getRiskScore(bedTime: Int, wakeUpTime: Int) {
+    var medianHeartrate = 0.0
+    let url3 = getDocumentsDirectory().appendingPathComponent("risk.txt")
+    do {
+        
+        let input = try String(contentsOf: url3)
+        
+        
+        let jsonData = Data(input.utf8)
+        do {
+            let decoder = JSONDecoder()
+            
+            do {
+                let codableRisk = try decoder.decode([CodableRisk].self, from: jsonData)
+                
+                medianHeartrate = codableRisk.map{Int($0.risk)}.median()
+                
+             
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    } catch {
+        
+    }
     let filteredToNight = healthData.filter {
         return $0.date.get(.hour) > bedTime && $0.date.get(.hour) < wakeUpTime
     }
@@ -136,7 +160,7 @@ func getRiskScore(bedTime: Int, wakeUpTime: Int) {
         heartRates.append(average(numbers: filteredToHour.map{$0.data}))
         dates.append(filteredToHour.last?.date ?? Date())
     }
-    let riskScore = average(numbers: heartRates)
+    let riskScore = average(numbers: heartRates) > medianHeartrate + 4 ? 1 : 0
     let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: [Explanation]())
     if risk.risk > 0 {
         LocalNotifications.schedule(permissionStrategy: .askSystemPermissionIfNeeded) {
@@ -144,6 +168,13 @@ func getRiskScore(bedTime: Int, wakeUpTime: Int) {
                 .at(hour: Date().get(.hour), minute: Date().get(.minute) + 1)
                 .schedule(title: "First Friday", body: "Oakland let's go!")
         }
+    }
+    func getDocumentsDirectory() -> URL {
+        // find all possible documents directories for this user
+        let paths = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
+        
+        // just send back the first one, which ought to be the only one
+        return paths[0]
     }
 //    self.risk = risk
 //    codableRisk.append(CodableRisk(id: risk.id, date: dates.last ?? Date(), risk: risk.risk, explanation: [String]()))
