@@ -24,6 +24,10 @@ class Health: ObservableObject {
     
     init() {
 //        backgroundDelivery()
+        getHealthData(type: .heartRate, dateDistanceType: .Month, dateDistance: 12) { value in
+            _ = self.getRiskScore(bedTime: 0, wakeUpTime: 4, data: value)
+            print(self.average(numbers: self.codableRisk.map{$0.risk}))
+        }
     }
     func getHealthData(type: HKQuantityTypeIdentifier, dateDistanceType: DateDistanceType, dateDistance: Int, completionHandler: @escaping ([HealthData]) -> Void) {
         DispatchQueue.main.async {
@@ -78,7 +82,7 @@ class Health: ObservableObject {
                         //data.append(UserData(id: UUID().uuidString, type: .Balance, title: type.rawValue, text: "", date: date, data: value))
                         
                         self.healthData.append(HealthData(id: UUID().uuidString, type: .Health, title: type.rawValue, text: "", date: date, data: value))
-                        print(type.rawValue)
+                        print(value)
                         
                         
                     }
@@ -92,10 +96,11 @@ class Health: ObservableObject {
             self.convertHealthDataToChart(healthData: self.healthData) { _ in
             
         }
+           
             self.healthStore.execute(query3)
         
         }
-        _ = getRiskScore(bedTime: 0, wakeUpTime: 4)
+       
     }
     func backgroundDelivery() {
         let readType2 = HKObjectType.quantityType(forIdentifier: .heartRate)
@@ -115,10 +120,11 @@ class Health: ObservableObject {
 }
         
     }
-    func getRiskScore(bedTime: Int, wakeUpTime: Int) -> (Risk, [CodableRisk]) {
+    func getRiskScore(bedTime: Int, wakeUpTime: Int, data: [HealthData]) -> (Risk, [CodableRisk]) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 30.0) {
         print("Calculating Risk...")
         var medianHeartrate = 0.0
-        let url3 = getDocumentsDirectory().appendingPathComponent("risk.txt")
+            let url3 = self.getDocumentsDirectory().appendingPathComponent("risk.txt")
         do {
             
             let input = try String(contentsOf: url3)
@@ -142,7 +148,7 @@ class Health: ObservableObject {
             
         }
         
-        let filteredToNight = healthData.filter {
+            let filteredToNight = self.healthData.filter {
             return $0.date.get(.hour) > bedTime && $0.date.get(.hour) < wakeUpTime
         }
         let filteredToHeartRate = filteredToNight.filter {
@@ -155,16 +161,19 @@ class Health: ObservableObject {
             let filteredToHour = filteredToHeartRate.filter { data in
                 return data.date.get(.hour) == hour
             }
-            heartRates.append(average(numbers: filteredToHour.map{$0.data}))
+            heartRates.append(self.average(numbers: filteredToHour.map{$0.data}))
             dates.append(filteredToHour.last?.date ?? Date())
         }
-        let riskScore = average(numbers: heartRates) > medianHeartrate + 4 ? 1 : 0
+            let riskScore = self.average(numbers: heartRates) > medianHeartrate + 4 ? 1 : 0
         let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "")] : [Explanation(image: .exclamationmarkCircle, explanation: "")]
         let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: explanation)
         self.risk = risk
-        print(risk)
-        codableRisk.append(CodableRisk(id: risk.id, date: dates.last ?? Date(), risk: risk.risk, explanation: [String]()))
+        
+            self.codableRisk.append(CodableRisk(id: risk.id, date: dates.last ?? Date(), risk: risk.risk, explanation: [String]()))
+            //print(self.codableRisk)
 
+       
+        }
         return (self.risk, codableRisk)
     }
     func average(numbers: [Double]) -> Double {
