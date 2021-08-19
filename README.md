@@ -14,13 +14,13 @@
 
 
 <h2>Privacy First<h2>
-Zero data leaves your device unless you approve sharing your data to further research.
+<body> Zero data leaves your device unless you approve sharing your data to further research.<body> 
 
 <h2>On-device Machine Learning<h2>
-Fine-tune your machine learning model on device to learn when you could possibly be sick.
+<body> Fine-tune your machine learning model on device to learn when you could possibly be sick.<body> 
 
 <h2>You Know Yourself Best<h2>
-Even if you receive a notification that you are possibly catching an illness, it's always up to you whether you choose to self isolate or ignore the alert.
+<body> Even if you receive a notification that you are possibly catching an illness, it's always up to you whether you choose to self isolate or ignore the alert.<body> 
 
 <svg width="540" height="1122" viewBox="0 0 540 1122" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <rect x="10" y="10" width="520" height="1101.78" rx="77" fill="url(#pattern0)" stroke="#3497DB" stroke-width="20"/>
