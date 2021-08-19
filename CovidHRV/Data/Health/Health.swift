@@ -93,7 +93,31 @@ class Health: ObservableObject {
         
         }
     }
-        
+    
+    func getRiskScore(bedTime: Int, wakeUpTime: Int) -> (Risk, [CodableRisk]) {
+        let filteredToNight = healthData.filter {
+            return $0.date.get(.hour) > bedTime && $0.date.get(.hour) < wakeUpTime
+        }
+        let filteredToHeartRate = filteredToNight.filter {
+            return $0.title == HKQuantityTypeIdentifier.heartRate.rawValue
+        }
+        var heartRates = [Double]()
+        var dates = [Date]()
+        for hour in bedTime...wakeUpTime {
+           
+            let filteredToHour = filteredToHeartRate.filter { data in
+                return data.date.get(.hour) == hour
+            }
+            heartRates.append(average(numbers: filteredToHour.map{$0.data}))
+            dates.append(filteredToHour.last?.date ?? Date())
+        }
+        let riskScore = average(numbers: heartRates)
+        let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: [Explanation]())
+        self.risk = risk
+        codableRisk.append(CodableRisk(id: risk.id, date: dates.last ?? Date(), risk: risk.risk, explanation: [String]()))
+
+        return (self.risk, codableRisk)
+    }
     func average(numbers: [Double]) -> Double {
        // print(numbers)
        return Double(numbers.reduce(0,+))/Double(numbers.count)

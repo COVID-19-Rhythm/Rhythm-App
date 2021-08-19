@@ -40,7 +40,7 @@ struct ContentView: View {
                             let codableRisk = try decoder.decode([CodableRisk].self, from: jsonData)
                             
                             health.codableRisk = codableRisk
-                           
+                            
                          
                         } catch {
                             print(error.localizedDescription)

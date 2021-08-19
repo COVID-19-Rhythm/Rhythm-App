@@ -132,6 +132,7 @@ class ML: ObservableObject {
        
 
     }
+    
     func average(numbers: [Double]) -> Double {
        // print(numbers)
        return Double(numbers.reduce(0,+))/Double(numbers.count)
@@ -143,5 +144,6 @@ class ML: ObservableObject {
         // just send back the first one, which ought to be the only one
         return paths[0]
     }
+    
 }
 #endif
