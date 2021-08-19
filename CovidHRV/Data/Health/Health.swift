@@ -22,6 +22,9 @@ class Health: ObservableObject {
     @Published var tempHealthData = HealthData(id: UUID().uuidString, type: .Feeling, title: "", text: "", date: Date(), data: 0.0)
     @Published var healthChartData = ChartData(values: [("", 0.0)])
     
+    init() {
+        backgroundDelivery()
+    }
     func getHealthData(type: HKQuantityTypeIdentifier, dateDistanceType: DateDistanceType, dateDistance: Int, completionHandler: @escaping ([HealthData]) -> Void) {
         DispatchQueue.main.async {
         let data = [HealthData]()
@@ -93,7 +96,23 @@ class Health: ObservableObject {
         
         }
     }
-    
+    func backgroundDelivery() {
+        let readType2 = HKObjectType.quantityType(forIdentifier: .heartRate)
+        #warning("switch to daily")
+        healthStore.enableBackgroundDelivery(for: readType2!, frequency: .immediate) { success, error in
+            if !success {
+                print("Error enabling background delivery for type \(readType2!.identifier): \(error.debugDescription)")
+            } else {
+                print("Success enabling background delivery for type \(readType2!.identifier)")
+            }
+            for type in self.readData {
+                self.getHealthData(type: type, dateDistanceType: .Month, dateDistance: 24) { _ in
+                print("YAH!")
+            }
+            }
+           
+}
+    }
     func getRiskScore(bedTime: Int, wakeUpTime: Int) -> (Risk, [CodableRisk]) {
         let filteredToNight = healthData.filter {
             return $0.date.get(.hour) > bedTime && $0.date.get(.hour) < wakeUpTime
