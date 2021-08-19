@@ -49,7 +49,11 @@ struct ContentView: View {
                 } catch {
                     
                 }
-               
+                for type in health.readData {
+                health.getHealthData(type: type, dateDistanceType: .Month, dateDistance: 24) { _ in
+                    
+                }
+                }
             }
             .onChange(of: health.risk) { value in
                 

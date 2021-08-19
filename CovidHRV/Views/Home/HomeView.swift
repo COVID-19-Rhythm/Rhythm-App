@@ -51,9 +51,8 @@ struct HomeView: View {
         }
         }
         .onAppear() {
-           
-            for type in health.readData {
-            health.getHealthData(type: type, dateDistanceType: .Month, dateDistance: 24) { _ in
+        }
+            
                //if type == .heartRate {
 //                exportDataToCSV(data: health.healthData) { _ in
 //                               DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
@@ -61,13 +60,11 @@ struct HomeView: View {
 //                               }
 //
 //                           }
-            }
+            
                
                
                 
-            }
-        
-}
+            
 //        .onReceive(health.healthData.publisher) { value in
 //            exportDataToCSV(data: health.healthData) { _ in
 //                DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {

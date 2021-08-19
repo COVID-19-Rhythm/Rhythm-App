@@ -5,6 +5,7 @@
 //  Created by Andreas on 8/17/21.
 //
 
+
 import SwiftUI
 import HealthKit
 import NiceNotifications
@@ -178,7 +179,6 @@ func getRiskScore(bedTime: Int, wakeUpTime: Int) {
     }
 //    self.risk = risk
 //    codableRisk.append(CodableRisk(id: risk.id, date: dates.last ?? Date(), risk: risk.risk, explanation: [String]()))
-
     //return (self.risk, codableRisk)
 }
 func average(numbers: [Double]) -> Double {

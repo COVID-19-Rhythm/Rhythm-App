@@ -23,7 +23,7 @@ class Health: ObservableObject {
     @Published var healthChartData = ChartData(values: [("", 0.0)])
     
     init() {
-        backgroundDelivery()
+//        backgroundDelivery()
     }
     func getHealthData(type: HKQuantityTypeIdentifier, dateDistanceType: DateDistanceType, dateDistance: Int, completionHandler: @escaping ([HealthData]) -> Void) {
         DispatchQueue.main.async {
@@ -95,6 +95,7 @@ class Health: ObservableObject {
             self.healthStore.execute(query3)
         
         }
+        _ = getRiskScore(bedTime: 0, wakeUpTime: 4)
     }
     func backgroundDelivery() {
         let readType2 = HKObjectType.quantityType(forIdentifier: .heartRate)
@@ -112,9 +113,10 @@ class Health: ObservableObject {
             }
            
 }
+        
     }
     func getRiskScore(bedTime: Int, wakeUpTime: Int) -> (Risk, [CodableRisk]) {
-        
+        print("Calculating Risk...")
         var medianHeartrate = 0.0
         let url3 = getDocumentsDirectory().appendingPathComponent("risk.txt")
         do {
@@ -148,7 +150,7 @@ class Health: ObservableObject {
         }
         var heartRates = [Double]()
         var dates = [Date]()
-        for hour in bedTime...wakeUpTime {
+        for hour in  bedTime...wakeUpTime {
            
             let filteredToHour = filteredToHeartRate.filter { data in
                 return data.date.get(.hour) == hour
@@ -157,8 +159,10 @@ class Health: ObservableObject {
             dates.append(filteredToHour.last?.date ?? Date())
         }
         let riskScore = average(numbers: heartRates) > medianHeartrate + 4 ? 1 : 0
-        let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: [Explanation]())
+        let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "")] : [Explanation(image: .exclamationmarkCircle, explanation: "")]
+        let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: explanation)
         self.risk = risk
+        print(risk)
         codableRisk.append(CodableRisk(id: risk.id, date: dates.last ?? Date(), risk: risk.risk, explanation: [String]()))
 
         return (self.risk, codableRisk)

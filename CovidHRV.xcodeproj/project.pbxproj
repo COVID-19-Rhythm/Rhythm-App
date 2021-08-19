@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		E1C313FD26CD8DD1008879FD /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C313FC26CD8DD1008879FD /* ShareSheet.swift */; };
-		E1E0443126CC74FB0024A12B /* CovidHRVApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E0443026CC74FB0024A12B /* CovidHRVApp.swift */; };
 		E1E0443326CC74FB0024A12B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E0443226CC74FB0024A12B /* ContentView.swift */; };
 		E1E0443526CC74FE0024A12B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E1E0443426CC74FE0024A12B /* Assets.xcassets */; };
 		E1E0443826CC74FE0024A12B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E1E0443726CC74FE0024A12B /* Preview Assets.xcassets */; };
@@ -77,6 +76,7 @@
 		E1E044E426CCF22B0024A12B /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1E044E326CCF22B0024A12B /* HealthKit.framework */; };
 		E1E044E726CD3C420024A12B /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = E1E044E626CD3C420024A12B /* SFSafeSymbols */; };
 		E1E044E926CD58680024A12B /* DataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E044E826CD58680024A12B /* DataView.swift */; };
+		E1E6086226CE8D5100AAA06F /* CovidHRVApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E6086126CE8D5100AAA06F /* CovidHRVApp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -124,7 +124,6 @@
 /* Begin PBXFileReference section */
 		E1C313FC26CD8DD1008879FD /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		E1E0442D26CC74FB0024A12B /* CovidHRV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CovidHRV.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		E1E0443026CC74FB0024A12B /* CovidHRVApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CovidHRVApp.swift; sourceTree = "<group>"; };
 		E1E0443226CC74FB0024A12B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E1E0443426CC74FE0024A12B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E1E0443726CC74FE0024A12B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -195,6 +194,7 @@
 		E1E044E126CCF22B0024A12B /* CovidHRV.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CovidHRV.entitlements; sourceTree = "<group>"; };
 		E1E044E326CCF22B0024A12B /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.0.sdk/System/Library/Frameworks/HealthKit.framework; sourceTree = DEVELOPER_DIR; };
 		E1E044E826CD58680024A12B /* DataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataView.swift; sourceTree = "<group>"; };
+		E1E6086126CE8D5100AAA06F /* CovidHRVApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CovidHRVApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -244,7 +244,7 @@
 			children = (
 				E1E044E126CCF22B0024A12B /* CovidHRV.entitlements */,
 				E1E044E026CCF0930024A12B /* Info.plist */,
-				E1E0443026CC74FB0024A12B /* CovidHRVApp.swift */,
+				E1E6086126CE8D5100AAA06F /* CovidHRVApp.swift */,
 				E1E0448126CCDC4E0024A12B /* Extensions.swift */,
 				E1E0447826CC79E90024A12B /* Views */,
 				E1E0446B26CC76370024A12B /* Data */,
@@ -623,13 +623,13 @@
 				E1E0447226CC77FE0024A12B /* ML.swift in Sources */,
 				E1E0448426CCDD1F0024A12B /* FeelingScoreView.swift in Sources */,
 				E1E0449F26CCDF830024A12B /* ChartView.swift in Sources */,
-				E1E0443126CC74FB0024A12B /* CovidHRVApp.swift in Sources */,
 				E1E0447726CC79E50024A12B /* HomeView.swift in Sources */,
 				E1E044A326CCDF830024A12B /* PieChartCell.swift in Sources */,
 				E1E044A026CCDF830024A12B /* Helpers.swift in Sources */,
 				E1E044A226CCDF830024A12B /* PieChartHelpers.swift in Sources */,
 				E1E0446F26CC764D0024A12B /* TimeData.swift in Sources */,
 				E1E044A626CCDF830024A12B /* LineView.swift in Sources */,
+				E1E6086226CE8D5100AAA06F /* CovidHRVApp.swift in Sources */,
 				E1E0448226CCDC4E0024A12B /* Extensions.swift in Sources */,
 				E1E044A926CCDF830024A12B /* MagnifierRect.swift in Sources */,
 				E1E0446D26CC76450024A12B /* HealthData.swift in Sources */,
@@ -909,6 +909,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CovidHRV/Info.plist;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "To compare data";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "To track Parkinson's";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -943,6 +944,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CovidHRV/Info.plist;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "To compare data";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "To track Parkinson's";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
