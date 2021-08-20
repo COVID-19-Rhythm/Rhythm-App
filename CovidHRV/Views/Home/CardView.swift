@@ -29,7 +29,7 @@ struct CardView: View {
                     HStack {
                         Spacer()
                     Text(card.description)
-                        .font(.custom("Poppins-Bold", size: 14, relativeTo: .headline))
+                        .font(.custom("Poppins", size: 14, relativeTo: .headline))
                         .multilineTextAlignment(.trailing)
                 }
                     HStack {

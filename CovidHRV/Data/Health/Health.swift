@@ -121,7 +121,7 @@ class Health: ObservableObject {
         
     }
     func getRiskScore(bedTime: Int, wakeUpTime: Int, data: [HealthData]) -> (Risk, [CodableRisk]) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 30.0) {
+        //DispatchQueue.main.asyncAfter(deadline: .now() + 30.0) {
         print("Calculating Risk...")
         var medianHeartrate = 0.0
             let url3 = self.getDocumentsDirectory().appendingPathComponent("risk.txt")
@@ -165,7 +165,7 @@ class Health: ObservableObject {
             dates.append(filteredToHour.last?.date ?? Date())
         }
             let riskScore = self.average(numbers: heartRates) > medianHeartrate + 4 ? 1 : 0
-        let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "")] : [Explanation(image: .exclamationmarkCircle, explanation: "")]
+        let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "You may have an illness"), Explanation(image: .exclamationmarkCircle, explanation: "Calculated from your average heartrate while asleep")] : [Explanation(image: .checkmark, explanation: "You may not have an illness"), Explanation(image: .chartPie, explanation: "Calculated from your average heartrate while asleep")]
         let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: explanation)
         self.risk = risk
         
@@ -173,7 +173,7 @@ class Health: ObservableObject {
             //print(self.codableRisk)
 
        
-        }
+        //}
         return (self.risk, codableRisk)
     }
     func average(numbers: [Double]) -> Double {

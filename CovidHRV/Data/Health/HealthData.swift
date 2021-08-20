@@ -42,11 +42,11 @@ struct Explanation: Hashable {
 }
 
 enum DayOfWeek: Int, Codable, CaseIterable  {
-    case Monday = 0
-    case Tuesday = 1
-    case Wednesday = 2
-    case Thursday = 3
-    case Friday = 4
-    case Saturday = 5
-    case Sunday = 6
+    case Monday = 2
+    case Tuesday = 3
+    case Wednesday = 4
+    case Thursday = 5
+    case Friday = 6
+    case Saturday = 7
+    case Sunday = 1
 }

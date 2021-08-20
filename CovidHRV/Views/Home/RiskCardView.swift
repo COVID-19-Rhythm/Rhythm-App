@@ -22,6 +22,11 @@ struct RiskCardView: View {
                     Image(systemSymbol: .chartBar)
                         .font(.title)
                 }
+                
+                .onAppear() {
+                    min = health.codableRisk.map{$0.risk}.min() ?? 0
+                    max = health.codableRisk.map{$0.risk}.max() ?? 0
+                }
                 Text("Covid Risk Score")
                     .font(.custom("Poppins-Bold", size: 18, relativeTo: .headline))
                 Spacer()
@@ -45,7 +50,8 @@ struct RiskCardView: View {
                 ZStack {
                     Color(uiColor: .systemBackground)
                     VStack {
-                LazyVGrid(columns: [GridItem(), GridItem()]) {
+                //LazyVGrid(columns: [GridItem(), GridItem()]) {
+                        VStack {
                 ForEach(health.risk.explanation, id: \.self) { value in
                     
                     HStack {
@@ -53,10 +59,12 @@ struct RiskCardView: View {
                         Image(systemSymbol: value.image)
                         
                         Text(value.explanation)
+                            .foregroundColor(Color(value.explanation == "You may have an illness" ? "red" : "text"))
                     .font(.custom("Poppins-Bold", size: 16, relativeTo: .headline))
                         Spacer()
                     }
                 .padding(.top)
+                    Divider()
                 }
                 } .transition(.move(edge: .top))
                 Button(action: {
@@ -101,10 +109,10 @@ struct HalvedCircularBar: View {
                     Spacer()
                     HStack {
                         Text("0")
-                            .font(.custom("Poppins-Bold", size: 12, relativeTo: .headline))
+                            .font(.custom("Poppins", size: 12, relativeTo: .headline))
                         Spacer()
                         Text("100")
-                            .font(.custom("Poppins-Bold", size: 12, relativeTo: .headline))
+                            .font(.custom("Poppins", size: 12, relativeTo: .headline))
                    
                     } .padding(.horizontal, 105)
                     

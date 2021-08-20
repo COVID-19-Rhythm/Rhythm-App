@@ -125,25 +125,26 @@ struct DataView: View {
         let filtered = health.codableRisk.filter { data in
             return data.date.get(.weekOfYear) == date.get(.weekOfYear) && date.get(.year) == data.date.get(.year)
         }
-        
+        print(filtered)
         let scorePoints = ChartData(values: [("", 0.0)])
         
-        for day in 0...7 {
+        for day in 1...7 {
             
        
             let filteredDay = filtered.filter { data in
-                return data.date.get(.day) == day
+               
+                return data.date.get(.weekday) == day
             }
             
         
             
-            
+            //print(filteredDay)
 
             var scores = [Double]()
             
             let averageScore =  health.average(numbers: filteredDay.map{$0.risk})
-        
-            scorePoints.points.append(("\(DayOfWeek.init(rawValue: day) ?? .Monday)", averageScore))
+           
+            scorePoints.points.append(("\(DayOfWeek(rawValue: day) ?? .Monday)", averageScore))
             
             
            
