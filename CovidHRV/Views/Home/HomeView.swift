@@ -21,10 +21,11 @@ struct HomeView: View {
         NavigationView {
         ScrollView {
             LazyVGrid(columns: gridLayout) {
-                
+                if !health.risk.id.isEmpty {
                 RiskCardView(health: health)
-                FeelingScoreInputView(health: health)
-                    .padding()
+                }
+//                FeelingScoreInputView(health: health)
+//                    .padding()
                 if !enrolled {
                     CardView(card: Card( image: "doc", title: "Learn More About Research?", description: "We can change the tide of this pandemic.", cta: "Learn More"))
                     .padding()

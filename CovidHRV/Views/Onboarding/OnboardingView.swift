@@ -11,7 +11,9 @@ import HealthKit
 
 struct OnboardingView: View {
     let healthStore = HKHealthStore()
-    @State var onboardingViews = [Onboarding(id: UUID(), image: "privacy", title: "Privacy First", description: "Zero data leaves your device unless you approve sharing your data to further research."), Onboarding(id: UUID(), image: "data", title: "Types of Data", description: "Tap below to learn how you can use your data."), Onboarding(id: UUID(), image: "ml", title: "On Device Machine Learning", description: "Fine-tune your machine learning model on device to learn when you could possibly be sick."), Onboarding(id: UUID(), image: "feel", title: "Simply Rate How You Feel", description: "Rating how your feeling further trains your model to understand how you feel and to possibly alert to potential signs of disease."), Onboarding(id: UUID(), image: "you", title: "You Know Yourself Best", description: "Even if you receive a notification that you are possibly catching an illness, it's always up to you whether you choose to self isolate or ignore the alert.")]
+    //@State var onboardingViews = [Onboarding(id: UUID(), image: "privacy", title: "Privacy First", description: "Zero data leaves your device unless you approve sharing your data to further research."), Onboarding(id: UUID(), image: "data", title: "Types of Data", description: "Tap below to learn how you can use your data."), Onboarding(id: UUID(), image: "ml", title: "On Device Machine Learning", description: "Fine-tune your machine learning model on device to learn when you could possibly be sick."), Onboarding(id: UUID(), image: "feel", title: "Simply Rate How You Feel", description: "Rating how your feeling further trains your model to understand how you feel and to possibly alert to potential signs of disease."), Onboarding(id: UUID(), image: "you", title: "You Know Yourself Best", description: "Even if you receive a notification that you are possibly catching an illness, it's always up to you whether you choose to self isolate or ignore the alert.")]
+    
+    @State var onboardingViews = [Onboarding(id: UUID(), image: "privacy", title: "Privacy First", description: "Zero data leaves your device unless you approve sharing your data to further research."), Onboarding(id: UUID(), image: "data", title: "Types of Data", description: "Learn how you can use your data."), Onboarding(id: UUID(), image: "ml", title: "On Device Machine Learning", description: "Fine-tune your machine learning model on device to learn when you could possibly be sick."), Onboarding(id: UUID(), image: "you", title: "You Know Yourself Best", description: "Even if you receive a notification that you are possibly catching an illness, it's always up to you whether you choose to self isolate or ignore the alert.")]
     @State var slideNum = 0
     @Binding var isOnboarding: Bool
     @Binding var isOnboarding2: Bool
@@ -33,7 +35,8 @@ struct OnboardingView: View {
                     slideNum += 1
                 } else {
                     // dismiss sheet
-                    presentationMode.wrappedValue.dismiss()
+                    isOnboarding = true
+                    UserDefaults.standard.set(true, forKey: "isOnboarding")
                 }
                 //setting.onOff = false
             }) {
@@ -64,9 +67,9 @@ struct OnboardingView: View {
                         HKObjectType.quantityType(forIdentifier: .restingHeartRate)!,
                         HKObjectType.quantityType(forIdentifier: .walkingHeartRateAverage)!,
                         HKObjectType.quantityType(forIdentifier: .heartRate)!,
-                        HKObjectType.quantityType(forIdentifier: .walkingSpeed)!,
-                        HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
-                        HKObjectType.quantityType(forIdentifier: .respiratoryRate)!
+                        HKObjectType.quantityType(forIdentifier: .oxygenSaturation)!,
+                        HKObjectType.quantityType(forIdentifier: .respiratoryRate)!,
+                        HKObjectType.quantityType(forIdentifier: .stepCount)!
                     ])
                     
                     self.healthStore.requestAuthorization(toShare: [], read: readData) { (success, error) in
@@ -77,8 +80,8 @@ struct OnboardingView: View {
                     slideNum += 1
                 } else {
                     // dismiss sheet
-                    presentationMode.wrappedValue.dismiss()
-                    
+                   isOnboarding = true
+                   UserDefaults.standard.set(true, forKey: "isOnboarding")
                 }
                 
             }) {
@@ -121,6 +124,10 @@ struct OnboardingDetail: View {
                 .clipShape(RoundedRectangle(cornerRadius: 25.0))
                 .rotation3DEffect(.degrees(3), axis: (x: 0, y: 1, z: 0))
                 .shadow(color: Color(.lightGray).opacity(0.4), radius: 40)
+            
+            if onboarding.image == "data" {
+                DataTypesListView()
+            }
         }
         .padding()
     }

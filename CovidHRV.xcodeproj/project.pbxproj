@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E18A600C26D063B300F43372 /* DataTypesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18A600B26D063B300F43372 /* DataTypesListView.swift */; };
 		E1C313FD26CD8DD1008879FD /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C313FC26CD8DD1008879FD /* ShareSheet.swift */; };
 		E1E0443326CC74FB0024A12B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E0443226CC74FB0024A12B /* ContentView.swift */; };
 		E1E0443526CC74FE0024A12B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E1E0443426CC74FE0024A12B /* Assets.xcassets */; };
@@ -122,6 +123,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		E18A600B26D063B300F43372 /* DataTypesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTypesListView.swift; sourceTree = "<group>"; };
 		E1C313FC26CD8DD1008879FD /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		E1E0442D26CC74FB0024A12B /* CovidHRV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CovidHRV.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1E0443226CC74FB0024A12B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -218,6 +220,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E18A600D26D063B700F43372 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				E1E0447926CC7A790024A12B /* OnboardingView.swift */,
+				E18A600B26D063B300F43372 /* DataTypesListView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
 		E1E0442426CC74FA0024A12B = {
 			isa = PBXGroup;
 			children = (
@@ -330,7 +341,7 @@
 			children = (
 				E1E0448526CCDF830024A12B /* SwiftUICharts  */,
 				E1E0443226CC74FB0024A12B /* ContentView.swift */,
-				E1E0447926CC7A790024A12B /* OnboardingView.swift */,
+				E18A600D26D063B700F43372 /* Onboarding */,
 				E1E0448026CC82880024A12B /* Home */,
 				E1E044B626CCEA2A0024A12B /* ButtonStyles */,
 			);
@@ -627,6 +638,7 @@
 				E1E044A326CCDF830024A12B /* PieChartCell.swift in Sources */,
 				E1E044A026CCDF830024A12B /* Helpers.swift in Sources */,
 				E1E044A226CCDF830024A12B /* PieChartHelpers.swift in Sources */,
+				E18A600C26D063B300F43372 /* DataTypesListView.swift in Sources */,
 				E1E0446F26CC764D0024A12B /* TimeData.swift in Sources */,
 				E1E044A626CCDF830024A12B /* LineView.swift in Sources */,
 				E1E6086226CE8D5100AAA06F /* CovidHRVApp.swift in Sources */,
