@@ -36,7 +36,7 @@ struct OnboardingView: View {
                 } else {
                     // dismiss sheet
                     isOnboarding = true
-                    UserDefaults.standard.set(true, forKey: "isOnboarding")
+                    UserDefaults.standard.set(true, forKey: "onboarding")
                 }
                 //setting.onOff = false
             }) {
@@ -81,7 +81,7 @@ struct OnboardingView: View {
                 } else {
                     // dismiss sheet
                    isOnboarding = true
-                   UserDefaults.standard.set(true, forKey: "isOnboarding")
+                   UserDefaults.standard.set(true, forKey: "onboarding")
                 }
                 
             }) {

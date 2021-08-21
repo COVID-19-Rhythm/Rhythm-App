@@ -10,7 +10,7 @@ import HealthKit
 class Health: ObservableObject {
     @Published var codableRisk = [CodableRisk(id: UUID().uuidString, date: Date(), risk: 0.0, explanation: [String]())]
     @Published var healthStore = HKHealthStore()
-    @Published var risk = Risk(id: "demo", risk: 0.2, explanation: [Explanation(image: .exclamationmarkCircle, explanation: "Explain it here!!"), Explanation(image: .questionmarkCircle, explanation: "Explain it here?"), Explanation(image: .circle, explanation: "Explain it here.")])
+    @Published var risk = Risk(id: "", risk: 0.2, explanation: [Explanation(image: .exclamationmarkCircle, explanation: "Explain it here!!"), Explanation(image: .questionmarkCircle, explanation: "Explain it here?"), Explanation(image: .circle, explanation: "Explain it here.")])
 //    @Published var readData: [HKQuantityTypeIdentifier] =  [.heartRateVariabilitySDNN,
 //                                                            .restingHeartRate,
 //                                                            .walkingHeartRateAverage,
@@ -167,8 +167,9 @@ class Health: ObservableObject {
             let riskScore = self.average(numbers: heartRates) > medianHeartrate + 4 ? 1 : 0
         let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "You may have an illness"), Explanation(image: .exclamationmarkCircle, explanation: "Calculated from your average heartrate while asleep")] : [Explanation(image: .checkmark, explanation: "You may not have an illness"), Explanation(image: .chartPie, explanation: "Calculated from your average heartrate while asleep")]
         let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: explanation)
+        withAnimation(.easeOut(duration: 1.3)) {
         self.risk = risk
-        
+        }
             self.codableRisk.append(CodableRisk(id: risk.id, date: dates.last ?? Date(), risk: risk.risk, explanation: [String]()))
             //print(self.codableRisk)
 

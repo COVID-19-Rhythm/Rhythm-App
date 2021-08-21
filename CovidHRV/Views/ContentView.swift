@@ -20,7 +20,7 @@ struct ContentView: View {
         
             .onAppear() {
                 let readData = Set([
-                    HKObjectType.quantityType(forIdentifier: .heartRateVariabilitySDNN)!,
+                    HKObjectType.quantityType(forIdentifier: .heartRateVariabilitySDNN)!,HKObjectType.quantityType(forIdentifier: .walkingDoubleSupportPercentage)!,
                     HKObjectType.quantityType(forIdentifier: .restingHeartRate)!,
                     HKObjectType.quantityType(forIdentifier: .walkingHeartRateAverage)!,
                     HKObjectType.quantityType(forIdentifier: .heartRate)!,

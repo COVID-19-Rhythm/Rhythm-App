@@ -104,20 +104,20 @@ func getHealthData(type: HKQuantityTypeIdentifier, dateDistanceType: DateDistanc
     
 func backgroundDelivery() {
     let readType2 = HKObjectType.quantityType(forIdentifier: .heartRate)
-    #warning("switch to daily")
-    healthStore.enableBackgroundDelivery(for: readType2!, frequency: .immediate) { success, error in
+   
+    healthStore.enableBackgroundDelivery(for: readType2!, frequency: .daily) { success, error in
         if !success {
             print("Error enabling background delivery for type \(readType2!.identifier): \(error.debugDescription)")
         } else {
             print("Success enabling background delivery for type \(readType2!.identifier)")
-            self.getHealthData(type: HKQuantityTypeIdentifier.heartRate, dateDistanceType: .Week, dateDistance: 1) { _ in
-                print("YAH!")
-            
-            }
+            self.getHealthData(type: HKQuantityTypeIdentifier.heartRate, dateDistanceType: .Week, dateDistance: 1) { value in
+                self.getRiskScore(bedTime: 0, wakeUpTime: 4)
+
         }
        
         
        
+}
 }
 }
 func getRiskScore(bedTime: Int, wakeUpTime: Int) {
@@ -167,9 +167,10 @@ func getRiskScore(bedTime: Int, wakeUpTime: Int) {
         LocalNotifications.schedule(permissionStrategy: .askSystemPermissionIfNeeded) {
             Today()
                 .at(hour: Date().get(.hour), minute: Date().get(.minute) + 1)
-                .schedule(title: "First Friday", body: "Oakland let's go!")
+                .schedule(title: "Significant Risk", body: "Your health data may indicate you may be becoming sick")
         }
     }
+}
     func getDocumentsDirectory() -> URL {
         // find all possible documents directories for this user
         let paths = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)
@@ -180,7 +181,7 @@ func getRiskScore(bedTime: Int, wakeUpTime: Int) {
 //    self.risk = risk
 //    codableRisk.append(CodableRisk(id: risk.id, date: dates.last ?? Date(), risk: risk.risk, explanation: [String]()))
     //return (self.risk, codableRisk)
-}
+
 func average(numbers: [Double]) -> Double {
    // print(numbers)
    return Double(numbers.reduce(0,+))/Double(numbers.count)

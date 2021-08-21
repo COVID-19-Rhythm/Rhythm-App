@@ -23,6 +23,7 @@ struct HomeView: View {
             LazyVGrid(columns: gridLayout) {
                 if !health.risk.id.isEmpty {
                 RiskCardView(health: health)
+                        .transition(.move(edge: .top))
                 }
 //                FeelingScoreInputView(health: health)
 //                    .padding()

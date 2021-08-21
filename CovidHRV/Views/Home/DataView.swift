@@ -42,16 +42,9 @@ struct DataView: View {
                     if average2.isNormal {
                         maximum.points.append((String("Average"), average2))
                         maximum.points.append((String(filtered.last?.0 ?? "") , filtered.last?.1 ?? 0.0))
-                       //max = maximum
-//                        maxText = "At \(max.points.last?.0 ?? "") your score was higher than any other hour today."
-//
+
                     }
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                        withAnimation(.easeInOut) {
-//                            refresh = false
-//                        }
-//
-//                    }
+
                 }
             
             }
@@ -78,16 +71,8 @@ struct DataView: View {
                     if average2.isNormal {
                         maximum.points.append((String("Average"), average2))
                         maximum.points.append((String(filtered.last?.0 ?? "") , filtered.last?.1 ?? 0.0))
-                        //max = maximum
-                       //// maxText = "At \(max.points.last?.0 ?? "") your score was higher than any other hour today."
-                        
+                     
                     }
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                        withAnimation(.easeInOut) {
-//                            refresh = false
-//                        }
-//
-//                    }
                 })
             HStack {
                 Text("Total Score")
@@ -136,11 +121,6 @@ struct DataView: View {
                 return data.date.get(.weekday) == day
             }
             
-        
-            
-            //print(filteredDay)
-
-            var scores = [Double]()
             
             let averageScore =  health.average(numbers: filteredDay.map{$0.risk})
            
@@ -156,8 +136,3 @@ struct DataView: View {
     }
     }
 
-//struct DataView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        DataView()
-//    }
-//}

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E18A600C26D063B300F43372 /* DataTypesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18A600B26D063B300F43372 /* DataTypesListView.swift */; };
+		E18A600E26D1591400F43372 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1E044E326CCF22B0024A12B /* HealthKit.framework */; };
 		E1C313FD26CD8DD1008879FD /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C313FC26CD8DD1008879FD /* ShareSheet.swift */; };
 		E1E0443326CC74FB0024A12B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E0443226CC74FB0024A12B /* ContentView.swift */; };
 		E1E0443526CC74FE0024A12B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E1E0443426CC74FE0024A12B /* Assets.xcassets */; };
@@ -74,7 +75,6 @@
 		E1E044DD26CCF06A0024A12B /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E1E044CA26CCF06A0024A12B /* Poppins-SemiBold.ttf */; };
 		E1E044DE26CCF06A0024A12B /* Poppins-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E1E044CB26CCF06A0024A12B /* Poppins-Italic.ttf */; };
 		E1E044DF26CCF06A0024A12B /* Poppins-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E1E044CC26CCF06A0024A12B /* Poppins-MediumItalic.ttf */; };
-		E1E044E426CCF22B0024A12B /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1E044E326CCF22B0024A12B /* HealthKit.framework */; };
 		E1E044E726CD3C420024A12B /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = E1E044E626CD3C420024A12B /* SFSafeSymbols */; };
 		E1E044E926CD58680024A12B /* DataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E044E826CD58680024A12B /* DataView.swift */; };
 		E1E6086226CE8D5100AAA06F /* CovidHRVApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E6086126CE8D5100AAA06F /* CovidHRVApp.swift */; };
@@ -204,9 +204,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E18A600E26D1591400F43372 /* HealthKit.framework in Frameworks */,
 				E1E044E726CD3C420024A12B /* SFSafeSymbols in Frameworks */,
 				E1E0447F26CC7CD30024A12B /* NiceNotifications in Frameworks */,
-				E1E044E426CCF22B0024A12B /* HealthKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
