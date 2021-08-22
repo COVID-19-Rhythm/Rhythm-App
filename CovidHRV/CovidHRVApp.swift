@@ -151,23 +151,33 @@ func getRiskScore(bedTime: Int, wakeUpTime: Int) {
     let filteredToHeartRate = filteredToNight.filter {
         return $0.title == HKQuantityTypeIdentifier.heartRate.rawValue
     }
+    let filteredToSteps = filteredToNight.filter {
+        return $0.title == HKQuantityTypeIdentifier.stepCount.rawValue
+    }
+    let filteredToMoreThanZeroSteps = filteredToSteps.filter {
+        return $0.data != 0
+    }
     var heartRates = [Double]()
     var dates = [Date]()
+
+    
     for hour in bedTime...wakeUpTime {
        
         let filteredToHour = filteredToHeartRate.filter { data in
             return data.date.get(.hour) == hour
         }
+        if !filteredToMoreThanZeroSteps.map({$0.date}).contains(filteredToHour.last?.date ?? Date()) {
         heartRates.append(average(numbers: filteredToHour.map{$0.data}))
         dates.append(filteredToHour.last?.date ?? Date())
+        }
     }
-    let riskScore = average(numbers: heartRates) > medianHeartrate + 4 ? 1 : 0
+    let riskScore = average(numbers: heartRates) > medianHeartrate + 3 ? 1 : 0
     let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: [Explanation]())
     if risk.risk > 0 {
         LocalNotifications.schedule(permissionStrategy: .askSystemPermissionIfNeeded) {
             Today()
                 .at(hour: Date().get(.hour), minute: Date().get(.minute) + 1)
-                .schedule(title: "Significant Risk", body: "Your health data may indicate you may be becoming sick")
+                .schedule(title: "Significant Risk", body: "Your health data may indicate that you may be becoming sick")
         }
     }
 }

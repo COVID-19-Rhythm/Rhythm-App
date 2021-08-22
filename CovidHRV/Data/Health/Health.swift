@@ -17,17 +17,19 @@ class Health: ObservableObject {
 //                                                            .heartRate,
 //                                                            .walkingSpeed,
 //                                                            .respiratoryRate, .oxygenSaturation]
-    @Published var readData: [HKQuantityTypeIdentifier] =  [.heartRate]
+    @Published var readData: [HKQuantityTypeIdentifier] =  [.heartRate, .stepCount]
     @Published var healthData = [HealthData]()
     @Published var tempHealthData = HealthData(id: UUID().uuidString, type: .Feeling, title: "", text: "", date: Date(), data: 0.0)
     @Published var healthChartData = ChartData(values: [("", 0.0)])
     
     init() {
 //        backgroundDelivery()
-        getHealthData(type: .heartRate, dateDistanceType: .Month, dateDistance: 12) { value in
+        for type in readData {
+        getHealthData(type: type, dateDistanceType: .Month, dateDistance: 12) { value in
             _ = self.getRiskScore(bedTime: 0, wakeUpTime: 4, data: value)
             print(self.average(numbers: self.codableRisk.map{$0.risk}))
         }
+    }
     }
     func getHealthData(type: HKQuantityTypeIdentifier, dateDistanceType: DateDistanceType, dateDistance: Int, completionHandler: @escaping ([HealthData]) -> Void) {
         DispatchQueue.main.async {
@@ -58,7 +60,7 @@ class Health: ObservableObject {
         
         let query3 = HKStatisticsCollectionQuery(quantityType: quantityType3,
                                                  quantitySamplePredicate: nil,
-                                                 options: [.discreteAverage],
+                                                 options: [],
                                                  anchorDate: anchorDate,
                                                  intervalComponents: interval as DateComponents)
         
@@ -102,24 +104,7 @@ class Health: ObservableObject {
         }
        
     }
-    func backgroundDelivery() {
-        let readType2 = HKObjectType.quantityType(forIdentifier: .heartRate)
-        #warning("switch to daily")
-        healthStore.enableBackgroundDelivery(for: readType2!, frequency: .immediate) { success, error in
-            if !success {
-                print("Error enabling background delivery for type \(readType2!.identifier): \(error.debugDescription)")
-            } else {
-                print("Success enabling background delivery for type \(readType2!.identifier)")
-            }
-            for type in self.readData {
-                self.getHealthData(type: type, dateDistanceType: .Month, dateDistance: 24) { _ in
-                print("YAH!")
-            }
-            }
-           
-}
-        
-    }
+
     func getRiskScore(bedTime: Int, wakeUpTime: Int, data: [HealthData]) -> (Risk, [CodableRisk]) {
         //DispatchQueue.main.asyncAfter(deadline: .now() + 30.0) {
         print("Calculating Risk...")
@@ -148,21 +133,32 @@ class Health: ObservableObject {
             
         }
         
-            let filteredToNight = self.healthData.filter {
+        let filteredToNight = healthData.filter {
             return $0.date.get(.hour) > bedTime && $0.date.get(.hour) < wakeUpTime
         }
         let filteredToHeartRate = filteredToNight.filter {
             return $0.title == HKQuantityTypeIdentifier.heartRate.rawValue
         }
+        let filteredToSteps = filteredToNight.filter {
+            return $0.title == HKQuantityTypeIdentifier.stepCount.rawValue
+        }
+        let filteredToMoreThanZeroSteps = filteredToSteps.filter {
+            return $0.data != 0
+        }
         var heartRates = [Double]()
         var dates = [Date]()
-        for hour in  bedTime...wakeUpTime {
+
+        
+        for hour in bedTime...wakeUpTime {
            
             let filteredToHour = filteredToHeartRate.filter { data in
                 return data.date.get(.hour) == hour
             }
-            heartRates.append(self.average(numbers: filteredToHour.map{$0.data}))
+            if !filteredToMoreThanZeroSteps.map({$0.date}).contains(filteredToHour.last?.date ?? Date()) {
+            heartRates.append(average(numbers: filteredToHour.map{$0.data}))
             dates.append(filteredToHour.last?.date ?? Date())
+                
+            }
         }
             let riskScore = self.average(numbers: heartRates) > medianHeartrate + 4 ? 1 : 0
         let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "You may have an illness"), Explanation(image: .exclamationmarkCircle, explanation: "Calculated from your average heartrate while asleep")] : [Explanation(image: .checkmark, explanation: "You may not have an illness"), Explanation(image: .chartPie, explanation: "Calculated from your average heartrate while asleep")]
