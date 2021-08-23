@@ -32,7 +32,11 @@ class Health: ObservableObject {
     }
     }
     func getHealthData(type: HKQuantityTypeIdentifier, dateDistanceType: DateDistanceType, dateDistance: Int, completionHandler: @escaping ([HealthData]) -> Void) {
+        for i in 0...100 {
+        print(1)
+        }
         DispatchQueue.main.async {
+          
         let data = [HealthData]()
         let calendar = NSCalendar.current
         var anchorComponents = calendar.dateComponents([.day, .month, .year, .weekday], from: NSDate() as Date)
@@ -60,7 +64,7 @@ class Health: ObservableObject {
         
         let query3 = HKStatisticsCollectionQuery(quantityType: quantityType3,
                                                  quantitySamplePredicate: nil,
-                                                 options: [],
+                                                 options: [.mostRecent],
                                                  anchorDate: anchorDate,
                                                  intervalComponents: interval as DateComponents)
         
@@ -76,8 +80,8 @@ class Health: ObservableObject {
                     
                     //if statsCollection.sources().last?.name == UIDevice.current.name {
                     //print(UIDevice.current.name)
-                    if let quantity = statistics.averageQuantity() {
-                        
+                    if let quantity = statistics.mostRecentQuantity() {
+                       
                         let date = statistics.startDate
                         //for: E.g. for steps it's HKUnit.count()
                         let value = quantity.is(compatibleWith: .percent()) ? quantity.doubleValue(for: .percent()) : quantity.is(compatibleWith: .count()) ? quantity.doubleValue(for: .count()) : quantity.is(compatibleWith: .inch()) ? quantity.doubleValue(for: .inch()) : quantity.is(compatibleWith: HKUnit.count().unitDivided(by: HKUnit.minute())) ? quantity.doubleValue(for: HKUnit.count().unitDivided(by: HKUnit.minute())) : quantity.doubleValue(for: HKUnit.mile().unitDivided(by: HKUnit.hour()))
@@ -122,7 +126,7 @@ class Health: ObservableObject {
                 do {
                     let codableRisk = try decoder.decode([CodableRisk].self, from: jsonData)
                     
-                    medianHeartrate = codableRisk.map{Int($0.risk)}.median()
+                   // medianHeartrate = codableRisk.map{Int($0.risk)}.median()
                     
                  
                 } catch {
@@ -148,20 +152,22 @@ class Health: ObservableObject {
         var heartRates = [Double]()
         var dates = [Date]()
 
-        
+       
         for hour in bedTime...wakeUpTime {
            
             let filteredToHour = filteredToHeartRate.filter { data in
                 return data.date.get(.hour) == hour
             }
             if !filteredToMoreThanZeroSteps.map({$0.date}).contains(filteredToHour.last?.date ?? Date()) {
-            heartRates.append(average(numbers: filteredToHour.map{$0.data}))
+                heartRates.append(filteredToHour.isEmpty ? filteredToHour.last?.data ?? 0.0 : average(numbers: filteredToHeartRate.map{$0.data}))
             dates.append(filteredToHour.last?.date ?? Date())
                 
             }
         }
+        print(heartRates)
+        medianHeartrate = heartRates.median()
             let riskScore = self.average(numbers: heartRates) > medianHeartrate + 4 ? 1 : 0
-        let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "You may have an illness"), Explanation(image: .exclamationmarkCircle, explanation: "Calculated from your average heartrate while asleep")] : [Explanation(image: .checkmark, explanation: "You may not have an illness"), Explanation(image: .chartPie, explanation: "Calculated from your average heartrate while asleep")]
+        let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "Your health data may indicate you have an illness"), Explanation(image: .heart, explanation: "Calculated from your average heartrate while asleep"),  Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis, its an alert to consult with your doctor")] : [Explanation(image: .checkmark, explanation: "You may not have an illness"), Explanation(image: .chartPie, explanation: "Calculated from your average heartrate while asleep"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis, you may still have an illness")]
         let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: explanation)
         withAnimation(.easeOut(duration: 1.3)) {
         self.risk = risk

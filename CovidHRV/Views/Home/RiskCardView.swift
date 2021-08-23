@@ -59,7 +59,8 @@ struct RiskCardView: View {
                         Image(systemSymbol: value.image)
                         
                         Text(value.explanation)
-                            .foregroundColor(Color(value.explanation == "You may have an illness" ? "red" : "text"))
+                        
+                            .foregroundColor(Color(value.explanation == "Your health data may indicate you have an illness" ? "red" : "text"))
                     .font(.custom("Poppins-Bold", size: 16, relativeTo: .headline))
                         Spacer()
                     }

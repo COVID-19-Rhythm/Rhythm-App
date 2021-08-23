@@ -135,7 +135,7 @@ func getRiskScore(bedTime: Int, wakeUpTime: Int) {
             do {
                 let codableRisk = try decoder.decode([CodableRisk].self, from: jsonData)
                 
-                medianHeartrate = codableRisk.map{Int($0.risk)}.median()
+                medianHeartrate = codableRisk.map{Double($0.risk)}.median()
                 
              
             } catch {

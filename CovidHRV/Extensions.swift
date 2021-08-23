@@ -57,7 +57,7 @@ extension Array where Element:Equatable {
         return result
     }
 }
-extension Array where Element == Int {
+extension Array where Element == Double {
     func median() -> Double {
         let sortedArray = sorted()
         if count % 2 != 0 {
