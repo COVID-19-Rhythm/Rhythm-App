@@ -21,17 +21,24 @@ class Health: ObservableObject {
     @Published var healthData = [HealthData]()
     @Published var tempHealthData = HealthData(id: UUID().uuidString, type: .Feeling, title: "", text: "", date: Date(), data: 0.0)
     @Published var healthChartData = ChartData(values: [("", 0.0)])
-    
+    @Published var todayHeartRate = [HealthData]()
     init() {
 //        backgroundDelivery()
+//        for type in readData {
+//            getHealthData(type: type, dateDistanceType: .Week, dateDistance: 30, endDate: Date() - (3600*24)) { value in
+//            //_ = self.getRiskScore(bedTime: 0, wakeUpTime: 4, data: value)
+//           // print(self.average(numbers: self.codableRisk.map{$0.risk}))
+//        }
+//        }
         for type in readData {
-        getHealthData(type: type, dateDistanceType: .Week, dateDistance: 30) { value in
-            _ = self.getRiskScore(bedTime: 0, wakeUpTime: 4, data: value)
-            print(self.average(numbers: self.codableRisk.map{$0.risk}))
+            getHealthData(type: type, dateDistanceType: .Week, dateDistance: 30, endDate: Date()) { value in
+              
+                _ = self.getRiskScore(bedTime: 0, wakeUpTime: 4, data: value)
+//            print(self.average(numbers: self.codableRisk.map{$0.risk}))
         }
     }
     }
-    func getHealthData(type: HKQuantityTypeIdentifier, dateDistanceType: DateDistanceType, dateDistance: Int, completionHandler: @escaping ([HealthData]) -> Void) {
+    func getHealthData(type: HKQuantityTypeIdentifier, dateDistanceType: DateDistanceType, dateDistance: Int, endDate: Date, completionHandler: @escaping ([HealthData]) -> Void) {
         
         DispatchQueue.main.async {
           
@@ -51,7 +58,7 @@ class Health: ObservableObject {
         let interval = NSDateComponents()
         interval.minute = 30
         
-        let endDate = Date()
+            
         
         guard let startDate = calendar.date(byAdding: (dateDistanceType == .Week ? .day : .month), value: -dateDistance, to: endDate) else {
             fatalError("*** Unable to calculate the start date ***")
@@ -87,7 +94,7 @@ class Health: ObservableObject {
                         
                         self.healthData.append(HealthData(id: UUID().uuidString, type: .Health, title: type.rawValue, text: "", date: date, data: value))
                         if type == .heartRate {
-                        print(value)
+                        print(date)
                         }
                         
                         
@@ -112,6 +119,7 @@ class Health: ObservableObject {
     func getRiskScore(bedTime: Int, wakeUpTime: Int, data: [HealthData]) -> (Risk, [CodableRisk]) {
         //DispatchQueue.main.asyncAfter(deadline: .now() + 30.0) {
         print("Calculating Risk...")
+        if !healthData.isEmpty {
         var medianHeartrate = 0.0
             let url3 = self.getDocumentsDirectory().appendingPathComponent("risk.txt")
         do {
@@ -149,28 +157,43 @@ class Health: ObservableObject {
         let filteredToMoreThanZeroSteps = filteredToSteps.filter {
             return $0.data != 0
         }
+        var todayHeartRates = [Double]()
         var heartRates = [Double]()
+        var averageHRPerNight = [Double]()
         var dates = [Date]()
-
+        print(healthData.map{$0.date})
+        for day in 0...30 {
+        let filteredToDay = filteredToHeartRate.filter { data in
+            return data.date.get(.day) == day && data.date.get(.month) == Date().get(.month)
+        }
+            heartRates = []
+            print(filteredToDay)
        
-        for hour in bedTime...wakeUpTime {
-           
-            let filteredToHour = filteredToHeartRate.filter { data in
-                return data.date.get(.hour) == hour
-            }
-            if !filteredToMoreThanZeroSteps.map({$0.date}).contains(filteredToHour.last?.date ?? Date()) {
-                heartRates.append(filteredToHeartRate.isEmpty ? filteredToHeartRate.last?.data ?? 0.0 : average(numbers: filteredToHeartRate.map{$0.data}))
-            dates.append(filteredToHeartRate.last?.date ?? Date())
+            if !filteredToMoreThanZeroSteps.map({$0.date}).contains(filteredToDay.last?.date ?? Date()) {
+                if !filteredToDay.isEmpty {
+                    if Date().get(.day) == day {
+                        todayHeartRates.append(filteredToDay.isEmpty ? filteredToDay.last?.data ?? 0.0 : average(numbers: filteredToDay.map{$0.data}))
+                    } else {
+                        heartRates.append(filteredToDay.isEmpty ? filteredToDay.last?.data ?? 0.0 : average(numbers: filteredToDay.map{$0.data}))
+                    }
                 
+                    
+            dates.append(filteredToDay.last?.date ?? Date())
+                }
+            
+        }
+            if !heartRates.isEmpty {
+                averageHRPerNight.append(average(numbers: heartRates))
             }
         }
-        print(heartRates)
-        medianHeartrate = heartRates.median()
-            let riskScore = self.average(numbers: heartRates) > medianHeartrate + 4 ? 1 : 0
+       print("averageHRPerNight")
+       print(averageHRPerNight)
+        medianHeartrate = averageHRPerNight.median()
+            let riskScore = self.average(numbers: todayHeartRates) > medianHeartrate + 3 ? 1 : 0
         let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "Your health data may indicate you have an illness"), Explanation(image: .heart, explanation: "Calculated from your average heartrate while asleep"),  Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis, its an alert to consult with your doctor")] : [Explanation(image: .checkmark, explanation: "Your health data may indicate you do not have an illness"), Explanation(image: .chartPie, explanation: "Calculated from your average heartrate while asleep"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis or lack thereof, you may still have an illness")]
         let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: explanation)
         #warning("Change to a highher value to prevent bad data (because of low amount of data)")
-        if heartRates.count > 0 {
+        if averageHRPerNight.count > 0 {
         withAnimation(.easeOut(duration: 1.3)) {
             
         self.risk = risk
@@ -180,7 +203,7 @@ class Health: ObservableObject {
             self.risk = Risk(id: "NoData", risk: CGFloat(21), explanation: [Explanation(image: .exclamationmarkCircle, explanation: "Wear your Apple Watch as you sleep to see your data")])
         }
             //print(self.codableRisk)
-
+        }
        
         //}
         return (self.risk, codableRisk)
