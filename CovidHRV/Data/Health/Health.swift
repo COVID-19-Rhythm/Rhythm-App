@@ -36,7 +36,8 @@ class Health: ObservableObject {
                 print("Error enabling background delivery for type \(readType2!.identifier): \(error.debugDescription)")
             } else {
                 print("Success enabling background delivery for type \(readType2!.identifier)")
-              
+                self.retrieveSleepAnalysis() { _ in
+                self.getHealthData(type: .stepCount, dateDistanceType: .Week, dateDistance: 30, endDate: Date()) { value in
                 self.getHealthData(type: .stepCount, dateDistanceType: .Week, dateDistance: 30, endDate: Date()) { value in
                   
                     for type in self.readData {
@@ -59,12 +60,84 @@ class Health: ObservableObject {
                        // }
 
             }
+                    }
+                    }
                 }
            
             
            
     }
     }
+    }
+    func convertSleepStartDate(StartDate: Date) -> Date {
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyy-MM-dd '18':'00':'01' +0000"
+        let dateString = dateFormatter.string(from: StartDate)
+        dateFormatter.dateFormat = "yyy-MM-dd HH:mm:ss +0000"
+        let date = dateFormatter.date(from: dateString)
+        let datePrior = Calendar.current.date(byAdding: .hour, value: -24, to: date!)
+        print(datePrior as Any)
+
+        return datePrior!
+    }
+
+    func convertSleepEndDate(EndDate: Date) -> Date {
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyy-MM-dd '17':'59':'59' +0000"
+        let dateString = dateFormatter.string(from: EndDate)
+        dateFormatter.dateFormat = "yyy-MM-dd HH:mm:ss +0000"
+        let date = dateFormatter.date(from: dateString)
+        print(date as Any)
+
+        return date!
+    }
+   
+    
+    func retrieveSleepAnalysis(completionHandler: @escaping ([HealthData]) -> Void) {
+        
+        // first, we define the object type we want
+        if let sleepType = HKObjectType.categoryType(forIdentifier: HKCategoryTypeIdentifier.sleepAnalysis) {
+            
+            // Use a sortDescriptor to get the recent data first
+            let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
+            
+            // we create our query with a block completion to execute
+            let query = HKSampleQuery(sampleType: sleepType, predicate: nil, limit: 30, sortDescriptors: [sortDescriptor]) { (query, tmpResult, error) -> Void in
+                
+                if error != nil {
+                    
+                    // something happened
+                    return
+                    
+                }
+                
+                if let result = tmpResult {
+                    
+                    // do something with my data
+                    for item in result {
+                        if let sample = item as? HKCategorySample {
+                            let value = (sample.value == HKCategoryValueSleepAnalysis.inBed.rawValue) ? "inBed" : "asleep"
+                            let newData = HealthData(id: UUID().uuidString, type: .Health, title: value, text: "", date: sample.startDate, data: sample.endDate.timeIntervalSince1970)
+                            self.healthData.append(newData)
+                           
+                            print("Healthkit sleep: \(sample.startDate) \(sample.endDate) - value: \(value)")
+                        }
+                    }
+                }
+                completionHandler(self.healthData)
+            }
+            
+            // finally, we execute our query
+            healthStore.execute(query)
+        }
+    }
+    func calculateSleepHours(sample: HKSample) -> TimeInterval {
+
+        let hours = sample.endDate.timeIntervalSince(sample.startDate) / 60 / 60
+
+        return hours
     }
     func getHealthData(type: HKQuantityTypeIdentifier, dateDistanceType: DateDistanceType, dateDistance: Int, endDate: Date, completionHandler: @escaping ([HealthData]) -> Void) {
         
