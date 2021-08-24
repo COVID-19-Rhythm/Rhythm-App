@@ -12,7 +12,17 @@ struct DataTypesListView: View {
     @State var descriptions = ["Needed to detect irregularly high heart rate while asleep.", "Used to omit data taken at night while your still active.", "Monitors for high breathing rates while asleep.", "Needed to detect low oxygen in blood."]
     var body: some View {
         VStack {
+            
+               
             ForEach(explanations.indices, id:\.self) { i in
+                Button(action: {
+                    if !(explanations[i].toggle ?? false) {
+                        explanations[i].toggle = true
+                    } else {
+                        explanations[i].toggle = false
+                    }
+                }) {
+                    VStack {
                 HStack {
                     
                     Image(systemSymbol: explanations[i].image)
@@ -21,17 +31,22 @@ struct DataTypesListView: View {
                     .font(.custom("Poppins-Bold", size: 20, relativeTo: .headline))
                     Spacer()
                 }
+                    if (explanations[i].toggle ?? false) {
                 HStack {
                     
                 Text(descriptions[i])
                     .font(.custom("Poppins", size: 16, relativeTo: .headline))
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.top)
+                    .multilineTextAlignment(.leading)
                     Spacer()
                 }
+                    }
+                    }
                 Divider()
             }
         } .padding()
+        }
     }
 }
 

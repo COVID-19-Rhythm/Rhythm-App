@@ -24,8 +24,8 @@ struct RiskCardView: View {
                 }
                 
                 .onAppear() {
-                    min = health.codableRisk.map{$0.risk}.min() ?? 0
-                    max = health.codableRisk.map{$0.risk}.max() ?? 0
+                    min = (health.codableRisk.map{$0.risk}.min() ?? 0)*0.705
+                    max = (health.codableRisk.map{$0.risk}.max() ?? 0)*0.705
                 }
                 Text("Covid Risk Score")
                     .font(.custom("Poppins-Bold", size: 18, relativeTo: .headline))
@@ -90,7 +90,9 @@ struct HalvedCircularBar: View {
     @Binding var max: CGFloat
     var body: some View {
         VStack {
+            if progress != 21 {
             ZStack {
+                
                 Circle()
                     .trim(from: 0.0, to: 0.705)
                     .stroke(Color(progress > 0.8 ? "red" : "green"), lineWidth: 20)
@@ -103,9 +105,10 @@ struct HalvedCircularBar: View {
                     .frame(width: 200, height: 200)
                     .rotationEffect(Angle(degrees: -215))
                
-                Text("\(Int((self.progress)*100))%")
+                Text(progress == 21 ? "Not Enough Data" : "\(Int((self.progress)*100))%")
                     .font(.custom("Poppins-Bold", size: 20, relativeTo: .headline))
                     .foregroundColor(Color(progress > 0.8 ? "red" : "green"))
+                
                 VStack {
                     Spacer()
                     HStack {
@@ -117,13 +120,19 @@ struct HalvedCircularBar: View {
                    
                     } .padding(.horizontal, 105)
                     
-                } .padding(.bottom, 18)
+                } .padding(.bottom)
+                
             } .onAppear() {
-                min = min*0.705
-                max = max*0.705
+                
+//                min = min*0.705
+//                max = max*0.705
                
             }
-          
+            } else {
+                Text(progress == 21 ? "Not Enough Data" : "\(Int((self.progress)*100))%")
+                    .font(.custom("Poppins-Bold", size: 20, relativeTo: .headline))
+                    .foregroundColor(Color("red"))
+            }
         }
     }
     

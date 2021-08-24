@@ -17,7 +17,7 @@ class Health: ObservableObject {
 //                                                            .heartRate,
 //                                                            .walkingSpeed,
 //                                                            .respiratoryRate, .oxygenSaturation]
-    @Published var readData: [HKQuantityTypeIdentifier] =  [.heartRate, .stepCount]
+    @Published var readData: [HKQuantityTypeIdentifier] =  [.heartRate]//, .stepCount]
     @Published var healthData = [HealthData]()
     @Published var tempHealthData = HealthData(id: UUID().uuidString, type: .Feeling, title: "", text: "", date: Date(), data: 0.0)
     @Published var healthChartData = ChartData(values: [("", 0.0)])
@@ -25,16 +25,14 @@ class Health: ObservableObject {
     init() {
 //        backgroundDelivery()
         for type in readData {
-        getHealthData(type: type, dateDistanceType: .Month, dateDistance: 12) { value in
+        getHealthData(type: type, dateDistanceType: .Week, dateDistance: 30) { value in
             _ = self.getRiskScore(bedTime: 0, wakeUpTime: 4, data: value)
             print(self.average(numbers: self.codableRisk.map{$0.risk}))
         }
     }
     }
     func getHealthData(type: HKQuantityTypeIdentifier, dateDistanceType: DateDistanceType, dateDistance: Int, completionHandler: @escaping ([HealthData]) -> Void) {
-        for i in 0...100 {
-        print(1)
-        }
+        
         DispatchQueue.main.async {
           
         let data = [HealthData]()
@@ -64,7 +62,7 @@ class Health: ObservableObject {
         
         let query3 = HKStatisticsCollectionQuery(quantityType: quantityType3,
                                                  quantitySamplePredicate: nil,
-                                                 options: [.mostRecent],
+                                                 options: [.discreteAverage],
                                                  anchorDate: anchorDate,
                                                  intervalComponents: interval as DateComponents)
         
@@ -80,7 +78,7 @@ class Health: ObservableObject {
                     
                     //if statsCollection.sources().last?.name == UIDevice.current.name {
                     //print(UIDevice.current.name)
-                    if let quantity = statistics.mostRecentQuantity() {
+                    if let quantity = statistics.averageQuantity() {
                        
                         let date = statistics.startDate
                         //for: E.g. for steps it's HKUnit.count()
@@ -88,7 +86,9 @@ class Health: ObservableObject {
                         //data.append(UserData(id: UUID().uuidString, type: .Balance, title: type.rawValue, text: "", date: date, data: value))
                         
                         self.healthData.append(HealthData(id: UUID().uuidString, type: .Health, title: type.rawValue, text: "", date: date, data: value))
+                        if type == .heartRate {
                         print(value)
+                        }
                         
                         
                     }
@@ -159,20 +159,26 @@ class Health: ObservableObject {
                 return data.date.get(.hour) == hour
             }
             if !filteredToMoreThanZeroSteps.map({$0.date}).contains(filteredToHour.last?.date ?? Date()) {
-                heartRates.append(filteredToHour.isEmpty ? filteredToHour.last?.data ?? 0.0 : average(numbers: filteredToHeartRate.map{$0.data}))
-            dates.append(filteredToHour.last?.date ?? Date())
+                heartRates.append(filteredToHeartRate.isEmpty ? filteredToHeartRate.last?.data ?? 0.0 : average(numbers: filteredToHeartRate.map{$0.data}))
+            dates.append(filteredToHeartRate.last?.date ?? Date())
                 
             }
         }
         print(heartRates)
         medianHeartrate = heartRates.median()
             let riskScore = self.average(numbers: heartRates) > medianHeartrate + 4 ? 1 : 0
-        let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "Your health data may indicate you have an illness"), Explanation(image: .heart, explanation: "Calculated from your average heartrate while asleep"),  Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis, its an alert to consult with your doctor")] : [Explanation(image: .checkmark, explanation: "You may not have an illness"), Explanation(image: .chartPie, explanation: "Calculated from your average heartrate while asleep"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis, you may still have an illness")]
+        let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "Your health data may indicate you have an illness"), Explanation(image: .heart, explanation: "Calculated from your average heartrate while asleep"),  Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis, its an alert to consult with your doctor")] : [Explanation(image: .checkmark, explanation: "Your health data may indicate you do not have an illness"), Explanation(image: .chartPie, explanation: "Calculated from your average heartrate while asleep"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis or lack thereof, you may still have an illness")]
         let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: explanation)
+        #warning("Change to a highher value to prevent bad data (because of low amount of data)")
+        if heartRates.count > 0 {
         withAnimation(.easeOut(duration: 1.3)) {
+            
         self.risk = risk
         }
             self.codableRisk.append(CodableRisk(id: risk.id, date: dates.last ?? Date(), risk: risk.risk, explanation: [String]()))
+        } else {
+            self.risk = Risk(id: "NoData", risk: CGFloat(21), explanation: [Explanation(image: .exclamationmarkCircle, explanation: "Wear your Apple Watch as you sleep to see your data")])
+        }
             //print(self.codableRisk)
 
        
@@ -186,7 +192,7 @@ class Health: ObservableObject {
     func convertHealthDataToChart(healthData: [HealthData], completionHandler: @escaping (ChartData) -> Void) {
         
         for data in healthData {
-            healthChartData.points.append((data.type.rawValue,  data.data))
+            healthChartData.points.append((data.type.rawValue,  data.data*10))
             
         }
         completionHandler(healthChartData)

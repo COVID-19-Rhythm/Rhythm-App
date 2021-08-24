@@ -39,6 +39,7 @@ struct Risk: Hashable {
 struct Explanation: Hashable {
     var image: SFSymbol
     var explanation: String
+    var toggle: Bool?
 }
 
 enum DayOfWeek: Int, Codable, CaseIterable  {
