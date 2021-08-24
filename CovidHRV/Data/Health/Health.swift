@@ -7,6 +7,8 @@
 
 import SwiftUI
 import HealthKit
+import NiceNotifications
+
 class Health: ObservableObject {
     @Published var codableRisk = [CodableRisk(id: UUID().uuidString, date: Date(), risk: 0.0, explanation: [String]())]
     @Published var healthStore = HKHealthStore()
@@ -23,19 +25,46 @@ class Health: ObservableObject {
     @Published var healthChartData = ChartData(values: [("", 0.0)])
     @Published var todayHeartRate = [HealthData]()
     init() {
-//        backgroundDelivery()
-//        for type in readData {
-//            getHealthData(type: type, dateDistanceType: .Week, dateDistance: 30, endDate: Date() - (3600*24)) { value in
-//            //_ = self.getRiskScore(bedTime: 0, wakeUpTime: 4, data: value)
-//           // print(self.average(numbers: self.codableRisk.map{$0.risk}))
-//        }
-//        }
-        for type in readData {
-            getHealthData(type: type, dateDistanceType: .Week, dateDistance: 30, endDate: Date()) { value in
-              
-                _ = self.getRiskScore(bedTime: 0, wakeUpTime: 4, data: value)
-//            print(self.average(numbers: self.codableRisk.map{$0.risk}))
-        }
+        
+        backgroundDelivery()
+    }
+    func backgroundDelivery() {
+        let readType2 = HKObjectType.quantityType(forIdentifier: .heartRate)
+       
+        healthStore.enableBackgroundDelivery(for: readType2!, frequency: .immediate) { success, error in
+            if !success {
+                print("Error enabling background delivery for type \(readType2!.identifier): \(error.debugDescription)")
+            } else {
+                print("Success enabling background delivery for type \(readType2!.identifier)")
+                #warning("may be an issue")
+               // self.getHealthData(type: HKQuantityTypeIdentifier.heartRate, dateDistanceType: .Week, dateDistance: 1, endDate: Date()) { value in
+                self.getHealthData(type: .stepCount, dateDistanceType: .Week, dateDistance: 30, endDate: Date()) { value in
+                  
+                    for type in self.readData {
+                        self.getHealthData(type: type, dateDistanceType: .Week, dateDistance: 30, endDate: Date()) { value in
+                           
+                        _ = self.getRiskScore(bedTime: 0, wakeUpTime: 4, data: value)
+        //            print(self.average(numbers: self.codableRisk.map{$0.risk}))
+                }
+                }
+            }
+                    if self.healthData.isEmpty {
+                        
+                    } else {
+                        if  self.getRiskScore(bedTime: 0, wakeUpTime: 4, data: self.healthData).0.risk > 0.5 {
+                            LocalNotifications.schedule(permissionStrategy: .askSystemPermissionIfNeeded) {
+                                Today()
+                                    .at(hour: Date().get(.hour), minute: Date().get(.minute) + 1)
+                                    .schedule(title: "Significant Risk", body: "Your health data may indicate that you may be becoming sick")
+                            }
+                       // }
+
+            }
+                }
+           
+            
+           
+    }
     }
     }
     func getHealthData(type: HKQuantityTypeIdentifier, dateDistanceType: DateDistanceType, dateDistance: Int, endDate: Date, completionHandler: @escaping ([HealthData]) -> Void) {
@@ -69,7 +98,7 @@ class Health: ObservableObject {
         
         let query3 = HKStatisticsCollectionQuery(quantityType: quantityType3,
                                                  quantitySamplePredicate: nil,
-                                                 options: [.discreteAverage],
+                                                 options: [type == .stepCount ? .mostRecent : .discreteAverage],
                                                  anchorDate: anchorDate,
                                                  intervalComponents: interval as DateComponents)
         
@@ -85,7 +114,7 @@ class Health: ObservableObject {
                     
                     //if statsCollection.sources().last?.name == UIDevice.current.name {
                     //print(UIDevice.current.name)
-                    if let quantity = statistics.averageQuantity() {
+                    if let quantity = (type == .stepCount ? statistics.mostRecentQuantity() : statistics.averageQuantity()) {
                        
                         let date = statistics.startDate
                         //for: E.g. for steps it's HKUnit.count()
@@ -189,7 +218,8 @@ class Health: ObservableObject {
        print("averageHRPerNight")
        print(averageHRPerNight)
         medianHeartrate = averageHRPerNight.median()
-            let riskScore = self.average(numbers: todayHeartRates) > medianHeartrate + 3 ? 1 : 0
+            let lastNightAverage = self.average(numbers: todayHeartRates)
+            let riskScore =  lastNightAverage > medianHeartrate + 4 ? 1 : lastNightAverage > medianHeartrate + 3 ? 0.5 : 0
         let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "Your health data may indicate you have an illness"), Explanation(image: .heart, explanation: "Calculated from your average heartrate while asleep"),  Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis, its an alert to consult with your doctor")] : [Explanation(image: .checkmark, explanation: "Your health data may indicate you do not have an illness"), Explanation(image: .chartPie, explanation: "Calculated from your average heartrate while asleep"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis or lack thereof, you may still have an illness")]
         let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: explanation)
         #warning("Change to a highher value to prevent bad data (because of low amount of data)")
