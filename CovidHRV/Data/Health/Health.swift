@@ -36,8 +36,7 @@ class Health: ObservableObject {
                 print("Error enabling background delivery for type \(readType2!.identifier): \(error.debugDescription)")
             } else {
                 print("Success enabling background delivery for type \(readType2!.identifier)")
-                #warning("may be an issue")
-               // self.getHealthData(type: HKQuantityTypeIdentifier.heartRate, dateDistanceType: .Week, dateDistance: 1, endDate: Date()) { value in
+              
                 self.getHealthData(type: .stepCount, dateDistanceType: .Week, dateDistance: 30, endDate: Date()) { value in
                   
                     for type in self.readData {
@@ -198,7 +197,7 @@ class Health: ObservableObject {
             heartRates = []
             print(filteredToDay)
        
-            if !filteredToMoreThanZeroSteps.map({$0.date}).contains(filteredToDay.last?.date ?? Date()) {
+            if !filteredToMoreThanZeroSteps.map({$0.date.get(.hour)}).contains(filteredToDay.last?.date.get(.hour))  {
                 if !filteredToDay.isEmpty {
                     if Date().get(.day) == day {
                         todayHeartRates.append(filteredToDay.isEmpty ? filteredToDay.last?.data ?? 0.0 : average(numbers: filteredToDay.map{$0.data}))
@@ -220,7 +219,7 @@ class Health: ObservableObject {
         medianHeartrate = averageHRPerNight.median()
             let lastNightAverage = self.average(numbers: todayHeartRates)
             let riskScore =  lastNightAverage > medianHeartrate + 4 ? 1 : lastNightAverage > medianHeartrate + 3 ? 0.5 : 0
-        let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "Your health data may indicate you have an illness"), Explanation(image: .heart, explanation: "Calculated from your average heartrate while asleep"),  Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis, its an alert to consult with your doctor")] : [Explanation(image: .checkmark, explanation: "Your health data may indicate you do not have an illness"), Explanation(image: .chartPie, explanation: "Calculated from your average heartrate while asleep"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis or lack thereof, you may still have an illness")]
+        let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "Your health data may indicate you have an illness"), Explanation(image: .heart, explanation: "Calculated from your average heartrate while asleep"),  Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis, it's an alert to consult with your doctor")] : [Explanation(image: .checkmark, explanation: "Your health data may indicate you do not have an illness"), Explanation(image: .chartPie, explanation: "Calculated from your average heartrate while asleep"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis or lack thereof, you may still have an illness")]
         let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: explanation)
         #warning("Change to a highher value to prevent bad data (because of low amount of data)")
         if averageHRPerNight.count > 0 {

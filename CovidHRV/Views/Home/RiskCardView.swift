@@ -21,12 +21,10 @@ struct RiskCardView: View {
                  
                     Image(systemSymbol: .chartBar)
                         .font(.title)
+                        
                 }
                 
-                .onAppear() {
-                    min = (health.codableRisk.map{$0.risk}.min() ?? 0)*0.705
-                    max = (health.codableRisk.map{$0.risk}.max() ?? 0)*0.705
-                }
+               
                 Text("Covid Risk Score")
                     .font(.custom("Poppins-Bold", size: 18, relativeTo: .headline))
                 Spacer()
@@ -57,7 +55,7 @@ struct RiskCardView: View {
                     HStack {
                        
                         Image(systemSymbol: value.image)
-                        
+                            .foregroundColor(Color(value.explanation == "Your health data may indicate you have an illness" ? "red" : "text"))
                         Text(value.explanation)
                         
                             .foregroundColor(Color(value.explanation == "Your health data may indicate you have an illness" ? "red" : "text"))
@@ -78,6 +76,10 @@ struct RiskCardView: View {
                 }
             }
         } .padding()
+            .onAppear() {
+                min = (health.codableRisk.map{$0.risk}.min() ?? 0)*0.705
+                max = (health.codableRisk.map{$0.risk}.max() ?? 0)*0.705
+            }
     }
 }
 
