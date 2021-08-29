@@ -35,6 +35,7 @@ struct RiskCardView: View {
                 }) {
                     Image(systemSymbol: .questionmarkCircle)
                         .font(.largeTitle)
+                    
                 }
             }
             
