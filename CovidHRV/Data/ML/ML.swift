@@ -21,10 +21,22 @@ class ML: ObservableObject {
             return data.title == HKQuantityTypeIdentifier.heartRate.rawValue
         }
         let filteredToNight = filteredToHeartRate.filter { data in
-            return data.date.get(.hour) >  12 && data.date.get(.hour) <  8
+            return data.date.get(.hour) >  0 && data.date.get(.hour) <  4
         }
-        let nightlyHeartRateColumn = Column(name: "Heartrate", contents: filteredToNight)
+        
+        let startDates = filteredToNight.map{$0.date.getFormattedDate(format: "yyyy-MM-dd")}
+        let startDateColumn = Column(name: "Start_Date", contents: startDates)
+        
+        let startTimes = filteredToNight.map{$0.date.getFormattedDate(format: "HH:mm:ss")}
+        
+        let startTimeColumn = Column(name: "Start_Time", contents: startTimes)
+        
         trainingData.append(column: nightlyHeartRateColumn)
+        
+        let nightlyHeartRateColumn = Column(name: "Heartrate", contents: filteredToNight.map{$0.data})
+        trainingData.append(column: nightlyHeartRateColumn)
+        
+        
         do {
         try trainingData.writeCSV(to: getDocumentsDirectory().appendingPathComponent("A.csv"))
             //print(getDocumentsDirectory().appendingPathComponent("A.csv").dataRepresentation)
