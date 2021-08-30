@@ -7,6 +7,7 @@
 
 import SwiftUI
 import HealthKit
+import NiceNotifications
 struct ContentView: View {
     @StateObject var health = Health()
     //@StateObject var ml = ML()
@@ -19,6 +20,8 @@ struct ContentView: View {
         HomeView(health: health)//, ml: ml)
         
             .onAppear() {
+                LocalNotifications.schedule(permissionStrategy: .askSystemPermissionIfNeeded) {
+                }
                 let readData = Set([
                     HKObjectType.quantityType(forIdentifier: .heartRateVariabilitySDNN)!,HKObjectType.quantityType(forIdentifier: .walkingDoubleSupportPercentage)!,
                     HKCategoryType(.sleepAnalysis),

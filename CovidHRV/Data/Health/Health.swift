@@ -43,9 +43,12 @@ class Health: ObservableObject {
                   
                     for type in self.readData {
                         self.getHealthData(type: type, dateDistanceType: .Week, dateDistance: self.onboarding ? 30 : 30, endDate: Date()) { value in
-                           
+//                            let filtered = self.codableRisk.filter {
+//                                return $0.risk > 0
+//                            }
+//                            print(filtered)
                             let riskScore = self.getRiskScore(bedTime: 0, wakeUpTime: 4, data: value).0.risk
-                            if  riskScore > 0.5 {
+                            if  riskScore > 0.5 && riskScore != 21.0 {
                                 LocalNotifications.schedule(permissionStrategy: .askSystemPermissionIfNeeded) {
                                     Today()
                                         .at(hour: Date().get(.hour), minute: Date().get(.minute) + 1)
@@ -386,7 +389,7 @@ class Health: ObservableObject {
            print(averageHRPerNight)
             medianHeartrate = averageHRPerNight.median()
                 let riskScore = self.average(numbers: todayHeartRates) > medianHeartrate + 3 ? 1 : 0
-                let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "Your health data may indicate you have an illness"), Explanation(image: .heart, explanation: "Calculated from your average heartrate while asleep"),  Explanation(image: .sleep, explanation: "Alerts may be triggered from other factors than an illness, such as lack of sleep, intoxication, or intense exercise"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis, its an alert to consult with your doctor")] : [Explanation(image: .checkmark, explanation: "Your health data may indicate you do not have an illness"), Explanation(image: .chartPie, explanation: "Calculated from your average heartrate while asleep"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis or lack thereof, you may still have an illness")]
+                let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "Your health data may indicate you have an illness"), Explanation(image: .heart, explanation: "Calculated from your average heartrate while asleep"),  Explanation(image: .app, explanation: "Alerts may be triggered from other factors than an illness, such as lack of sleep, intoxication, or intense exercise"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis, it's an alert to consult with your doctor")] : [Explanation(image: .checkmark, explanation: "Your health data may indicate you do not have an illness"), Explanation(image: .chartPie, explanation: "Calculated from your average heartrate while asleep"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis or lack thereof, you may still have an illness")]
             let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: explanation)
             #warning("Change to a highher value to prevent bad data (because of low amount of data)")
             if averageHRPerNight.count > 0 {
@@ -396,6 +399,7 @@ class Health: ObservableObject {
             }
                 self.codableRisk.append(CodableRisk(id: risk.id, date: dates.last ?? Date(), risk: risk.risk, explanation: [String]()))
             } else {
+                //#warning("If last night's heartrate is empty, then alert goes off incorrectly")
                 self.risk = Risk(id: "NoData", risk: CGFloat(21), explanation: [Explanation(image: .exclamationmarkCircle, explanation: "Wear your Apple Watch as you sleep to see your data")])
             }
                 //print(self.codableRisk)
