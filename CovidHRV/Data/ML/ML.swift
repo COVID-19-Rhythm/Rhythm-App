@@ -17,6 +17,7 @@ class ML: ObservableObject {
     
     func exportDataToCSV(data: [HealthData], completionHandler: @escaping (Bool) -> Void) {
         var trainingData = DataFrame()
+        print("Exporting...")
         let filteredToHeartRate = data.filter { data in
             return data.title == HKQuantityTypeIdentifier.heartRate.rawValue
         }
@@ -29,9 +30,11 @@ class ML: ObservableObject {
         
         let startTimes = filteredToNight.map{$0.date.getFormattedDate(format: "HH:mm:ss")}
         
+        trainingData.append(column: startDateColumn)
+        
         let startTimeColumn = Column(name: "Start_Time", contents: startTimes)
         
-        trainingData.append(column: nightlyHeartRateColumn)
+        trainingData.append(column: startTimeColumn)
         
         let nightlyHeartRateColumn = Column(name: "Heartrate", contents: filteredToNight.map{$0.data})
         trainingData.append(column: nightlyHeartRateColumn)

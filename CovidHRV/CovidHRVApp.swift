@@ -11,7 +11,7 @@ import SwiftUI
 @main
 struct CovidHRVApp: App {
     @State var isTrue = false
-    
+   
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     var body: some Scene {
         WindowGroup {

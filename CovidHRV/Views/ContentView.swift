@@ -10,7 +10,8 @@ import HealthKit
 import NiceNotifications
 struct ContentView: View {
     @StateObject var health = Health()
-    //@StateObject var ml = ML()
+    @StateObject var ml = ML()
+    @State var share = false
     @State var onboarding = UserDefaults.standard.bool(forKey: "onboarding")
     var body: some View {
         if !onboarding {
@@ -64,6 +65,7 @@ struct ContentView: View {
 //
 //                }
                 //}
+               
             }
             .onChange(of: health.risk) { value in
                 
@@ -82,9 +84,16 @@ struct ContentView: View {
                     
                     
                 }
+                ml.exportDataToCSV(data: health.healthData) { _ in
+                    share = true
+                }
+            }
+            .sheet(isPresented: $share) {
+                ShareSheet(activityItems: [ml.getDocumentsDirectory().appendingPathComponent("A.csv")])
+                
             }
     }
-    
+           
     }
 }
 
