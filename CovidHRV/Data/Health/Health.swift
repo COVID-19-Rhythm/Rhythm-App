@@ -382,7 +382,7 @@ class Health: ObservableObject {
                     var averageOPerNight = [Double]()
                     var averageRPerNight = [Double]()
                 var dates = [Date]()
-                print(healthData.map{$0.date})
+                //print(healthData.map{$0.date})
                 for day in 0...32 {
                 let filteredToDay = filteredToHeartRate.filter { data in
                     return data.date.get(.day) == day && data.date.get(.month) == Date().get(.month)
@@ -399,18 +399,26 @@ class Health: ObservableObject {
                     rRates = []
                     heartRates = []
                         // print(filteredToDay)
-               
+                    if !filteredToDayR.isEmpty {
+                    if Date().get(.day) == day {
+                        todayRRates.append(filteredToDayR.count == 1 ? filteredToDayR.last?.data ?? 0.0 : average(numbers: filteredToDayR.map{$0.data}))
+                    } else {
+                        rRates.append(filteredToDayR.count == 1 ? filteredToDayR.last?.data ?? 0.0 : average(numbers: filteredToDayR.map{$0.data}))
+                    
+                    }
+                    }
                     if !filteredToMoreThanZeroSteps.map({$0.date}).contains(filteredToDay.last?.date ?? Date()) {
+                        
                         if !filteredToDay.isEmpty {
                             if Date().get(.day) == day {
-                                todayRRates.append(filteredToDayR.count == 1 ? filteredToDayR.last?.data ?? 0.0 : average(numbers: filteredToDayR.map{$0.data}))
+//                                todayRRates.append(filteredToDayR.count == 1 ? filteredToDayR.last?.data ?? 0.0 : average(numbers: filteredToDayR.map{$0.data}))
                                 todayHeartRates.append(filteredToDay.isEmpty ? filteredToDay.last?.data ?? 0.0 : average(numbers: filteredToDay.map{$0.data}))
                                 todayORates.append(filteredToDayO.isEmpty ? filteredToDayO.last?.data ?? 0.0 : average(numbers: filteredToDayO.map{$0.data}))
                                 
                                
                             } else {
                                 heartRates.append(filteredToDay.isEmpty ? filteredToDay.last?.data ?? 0.0 : average(numbers: filteredToDay.map{$0.data}))
-                                rRates.append(filteredToDayR.isEmpty ? filteredToDayR.last?.data ?? 0.0 : average(numbers: filteredToDayR.map{$0.data}))
+                                
                                 
                                // oRates.append(filteredToDayR.isEmpty ? filteredToDayR.last?.data ?? 0.0 : average(numbers: filteredToDayR.map{$0.data}))
                             }
@@ -420,16 +428,22 @@ class Health: ObservableObject {
                         }
                     
                 }
+                    
                     if !heartRates.isEmpty {
                         averageHRPerNight.append(average(numbers: heartRates))
+                    }
+                    if !rRates.isEmpty {
                         averageRPerNight.append(average(numbers: rRates))
                         averageOPerNight.append(average(numbers: oRates))
                     }
+                    
                 }
                print("averageHRPerNight")
                print(averageHRPerNight)
                     if !averageHRPerNight.isEmpty {
                 medianHeartrate = averageHRPerNight.median()
+                    }
+                        if !averageRPerNight.isEmpty {
                         medianRrate = averageRPerNight.median()
                         medianOrate = averageOPerNight.median()
                     }
