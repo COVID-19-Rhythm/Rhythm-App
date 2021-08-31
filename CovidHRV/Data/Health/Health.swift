@@ -457,11 +457,11 @@ class Health: ObservableObject {
                     
                     print("AVG R")
                     print(average(numbers: todayRRates))
-                    if medianRrate + 2 < average(numbers: todayRRates){
-                        riskScore += 0.5
+                    if medianRrate + 3 < average(numbers: todayRRates) {
+                        riskScore += 1.0
                     }
                  
-                    let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "Your health data may indicate you have an illness"), Explanation(image: .heart, explanation: "Calculated from your average heartrate while asleep"),  Explanation(image: .app, explanation: "Alerts may be triggered from other factors than an illness, such as lack of sleep, intoxication, or intense exercise"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis, it's an alert to consult with your doctor")] : [Explanation(image: .checkmark, explanation: "Your health data may indicate you do not have an illness"), Explanation(image: .chartPie, explanation: "Calculated from your average heartrate while asleep"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis or lack thereof, you may still have an illness")]
+                    let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "Your health data may indicate you have an illness"), Explanation(image: .heart, explanation: "Calculated from your average heartrate while asleep, respiratory rate, and oxygen saturation"),  Explanation(image: .app, explanation: "Alerts may be triggered from other factors than an illness, such as lack of sleep, intoxication, or intense exercise"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis, it's an alert to consult with your doctor")] : [Explanation(image: .checkmark, explanation: "Your health data may indicate you do not have an illness"), Explanation(image: .chartPie, explanation: "Calculated from your average heartrate while asleep, respiratory rate, and oxygen saturation"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis or lack thereof, you may still have an illness")]
                 let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: explanation)
                 #warning("Change to a highher value to prevent bad data (because of low amount of data)")
                 if averageHRPerNight.count > 0 {

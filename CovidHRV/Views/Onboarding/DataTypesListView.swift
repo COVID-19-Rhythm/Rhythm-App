@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DataTypesListView: View {
     @State var explanations = [Explanation(image: .heart, explanation: "Heart Rate"), Explanation(image: .person, explanation: "Steps"), Explanation(image: .lungs, explanation: "Respiratory Rate"), Explanation(image: .oCircle, explanation: "Oxygen Saturation")]
-    @State var descriptions = ["Needed to detect irregularly high heart rate while asleep.", "Used to omit data taken at night while your still active.", "Monitors for high breathing rates while asleep.", "Needed to detect low oxygen in blood."]
+    @State var descriptions = ["Detects irregularly high heart rate while asleep.", "Used to omit data taken at night while your still active.", "Monitors for high breathing rates while asleep (only WatchOS 8).", "Detects low oxygen in your blood (only Apple Watch 6)."]
     var body: some View {
         VStack {
             
