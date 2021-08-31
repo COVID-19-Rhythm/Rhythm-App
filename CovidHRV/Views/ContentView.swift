@@ -8,10 +8,10 @@
 import SwiftUI
 import HealthKit
 import NiceNotifications
-import TabularData
+//import TabularData
 struct ContentView: View {
     @StateObject var health = Health()
-    @StateObject var ml = ML()
+   // @StateObject var ml = ML()
     @State var share = false
     @State var onboarding = UserDefaults.standard.bool(forKey: "onboarding")
     var body: some View {
@@ -107,7 +107,7 @@ struct ContentView: View {
 //                }
             }
             .sheet(isPresented: $share) {
-                ShareSheet(activityItems: [ml.getDocumentsDirectory().appendingPathComponent("A.csv")])
+               // ShareSheet(activityItems: [ml.getDocumentsDirectory().appendingPathComponent("A.csv")])
                 
             }
     }

@@ -402,7 +402,7 @@ class Health: ObservableObject {
                
                     if !filteredToMoreThanZeroSteps.map({$0.date}).contains(filteredToDay.last?.date ?? Date()) {
                         if !filteredToDay.isEmpty {
-                            if filteredToR.last?.date.get(.day) == day {
+                            if Date().get(.day) == day {
                                 todayRRates.append(filteredToDayR.count == 1 ? filteredToDayR.last?.data ?? 0.0 : average(numbers: filteredToDayR.map{$0.data}))
                                 todayHeartRates.append(filteredToDay.isEmpty ? filteredToDay.last?.data ?? 0.0 : average(numbers: filteredToDay.map{$0.data}))
                                 todayORates.append(filteredToDayO.isEmpty ? filteredToDayO.last?.data ?? 0.0 : average(numbers: filteredToDayO.map{$0.data}))
