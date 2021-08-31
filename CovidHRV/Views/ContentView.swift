@@ -8,6 +8,7 @@
 import SwiftUI
 import HealthKit
 import NiceNotifications
+import TabularData
 struct ContentView: View {
     @StateObject var health = Health()
     @StateObject var ml = ML()
@@ -21,6 +22,23 @@ struct ContentView: View {
         HomeView(health: health)//, ml: ml)
         
             .onAppear() {
+                do {
+//                let df = try DataFrame(contentsOfCSVFile: Bundle.main.url(forResource: "P355472-AppleWatch-hr", withExtension: "csv")!)
+//                ml.importCSV(data: df) { data in
+//                    health.healthData = data
+//                    let risk = health.getRiskScore(bedTime: 0, wakeUpTime: 4, data: data)
+//                    //print(risk.1)
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+//                        let filtered = risk.1.filter {
+//                        return $0.risk != 0 && $0.risk != 21
+//                    }
+//                    //print(health.codableRisk.count)
+//                        print(filtered.count)
+//                    }
+//                }
+                } catch {
+                    
+                }
                 LocalNotifications.schedule(permissionStrategy: .askSystemPermissionIfNeeded) {
                 }
                 let readData = Set([
@@ -84,9 +102,9 @@ struct ContentView: View {
                     
                     
                 }
-                ml.exportDataToCSV(data: health.healthData) { _ in
-                    share = true
-                }
+//                ml.exportDataToCSV(data: health.healthData) { _ in
+//                    share = true
+//                }
             }
             .sheet(isPresented: $share) {
                 ShareSheet(activityItems: [ml.getDocumentsDirectory().appendingPathComponent("A.csv")])

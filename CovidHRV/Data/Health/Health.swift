@@ -343,13 +343,17 @@ class Health: ObservableObject {
             } catch {
                 
             }
-            
+                
+                
+                
             let filteredToNight = healthData.filter {
-                return $0.date.get(.hour) > bedTime && $0.date.get(.hour) < wakeUpTime
+                return ($0.date.get(.hour) > 22 && $0.date.get(.hour) < 24) || ($0.date.get(.hour) > 0 && $0.date.get(.hour) < 4)
             }
+               
             let filteredToHeartRate = filteredToNight.filter {
                 return $0.title == HKQuantityTypeIdentifier.heartRate.rawValue
             }
+               
             let filteredToSteps = filteredToNight.filter {
                 return $0.title == HKQuantityTypeIdentifier.stepCount.rawValue
             }
@@ -360,18 +364,28 @@ class Health: ObservableObject {
             var heartRates = [Double]()
             var averageHRPerNight = [Double]()
             var dates = [Date]()
-            print(healthData.map{$0.date})
+            //print(healthData.map{$0.date})
+                for month in 0...12 {
+                    //averageHRPerNight = []
+                    dates = []
+                    heartRates = []
+                    let filteredToMonth = filteredToHeartRate.filter { data in
+                        return data.date.get(.month) == month
+                    }
             for day in 0...30 {
-            let filteredToDay = filteredToHeartRate.filter { data in
-                return data.date.get(.day) == day && data.date.get(.month) == Date().get(.month)
+            let filteredToDay = filteredToMonth.filter { data in
+                return data.date.get(.day) == day
             }
                 heartRates = []
-                print(filteredToDay)
+               // print(filteredToDay)
            
                 if !filteredToMoreThanZeroSteps.map({$0.date}).contains(filteredToDay.last?.date ?? Date()) {
                     if !filteredToDay.isEmpty {
-                        if Date().get(.day) == day {
+                      //  print(filteredToDay.last?.date.get(.day) == day)
+                        #warning("Change back")
+                        if 25 == day && month == 4 {
                             todayHeartRates.append(filteredToDay.isEmpty ? filteredToDay.last?.data ?? 0.0 : average(numbers: filteredToDay.map{$0.data}))
+                          
                         } else {
                             heartRates.append(filteredToDay.isEmpty ? filteredToDay.last?.data ?? 0.0 : average(numbers: filteredToDay.map{$0.data}))
                         }
@@ -381,14 +395,22 @@ class Health: ObservableObject {
                     }
                 
             }
-                if !heartRates.isEmpty {
-                    averageHRPerNight.append(average(numbers: heartRates))
+              //  if !heartRates.isEmpty {
+                    let average = average(numbers: heartRates)
+                if !average.isNaN {
+                averageHRPerNight.append(average)
                 }
+            }
             }
            print("averageHRPerNight")
            print(averageHRPerNight)
+                if !averageHRPerNight.isEmpty {
             medianHeartrate = averageHRPerNight.median()
-                let riskScore = self.average(numbers: todayHeartRates) > medianHeartrate + 3 ? 1 : 0
+                }
+                for night in averageHRPerNight {
+                    #warning("exclude the night I am calculating the risk for from the overall medianHeartrate to ensure accuracy")
+                let riskScore = night > medianHeartrate + 3 ? 1 : 0
+                print(riskScore)
                 let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "Your health data may indicate you have an illness"), Explanation(image: .heart, explanation: "Calculated from your average heartrate while asleep"),  Explanation(image: .app, explanation: "Alerts may be triggered from other factors than an illness, such as lack of sleep, intoxication, or intense exercise"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis, it's an alert to consult with your doctor")] : [Explanation(image: .checkmark, explanation: "Your health data may indicate you do not have an illness"), Explanation(image: .chartPie, explanation: "Calculated from your average heartrate while asleep"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis or lack thereof, you may still have an illness")]
             let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: explanation)
             #warning("Change to a highher value to prevent bad data (because of low amount of data)")
@@ -398,13 +420,15 @@ class Health: ObservableObject {
             self.risk = risk
             }
                 self.codableRisk.append(CodableRisk(id: risk.id, date: dates.last ?? Date(), risk: risk.risk, explanation: [String]()))
+                //print("YAH")
             } else {
                 //#warning("If last night's heartrate is empty, then alert goes off incorrectly")
                 self.risk = Risk(id: "NoData", risk: CGFloat(21), explanation: [Explanation(image: .exclamationmarkCircle, explanation: "Wear your Apple Watch as you sleep to see your data")])
+               // print("ooooof")
             }
                 //print(self.codableRisk)
             }
-           
+            }
             //}
             return (self.risk, codableRisk)
         }

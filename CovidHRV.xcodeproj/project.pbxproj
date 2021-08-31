@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E138363626DD89C200B87F88 /* P355472-AppleWatch-hr.csv in Resources */ = {isa = PBXBuildFile; fileRef = E138363526DD89C200B87F88 /* P355472-AppleWatch-hr.csv */; };
 		E18A600C26D063B300F43372 /* DataTypesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18A600B26D063B300F43372 /* DataTypesListView.swift */; };
 		E18A600E26D1591400F43372 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1E044E326CCF22B0024A12B /* HealthKit.framework */; };
 		E1C313FD26CD8DD1008879FD /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C313FC26CD8DD1008879FD /* ShareSheet.swift */; };
@@ -123,6 +124,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		E138363526DD89C200B87F88 /* P355472-AppleWatch-hr.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "P355472-AppleWatch-hr.csv"; sourceTree = "<group>"; };
 		E18A600B26D063B300F43372 /* DataTypesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTypesListView.swift; sourceTree = "<group>"; };
 		E1C313FC26CD8DD1008879FD /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		E1E0442D26CC74FB0024A12B /* CovidHRV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CovidHRV.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -257,6 +259,7 @@
 				E1E044E026CCF0930024A12B /* Info.plist */,
 				E1E6086126CE8D5100AAA06F /* CovidHRVApp.swift */,
 				E1E0448126CCDC4E0024A12B /* Extensions.swift */,
+				E138363526DD89C200B87F88 /* P355472-AppleWatch-hr.csv */,
 				E1E0447826CC79E90024A12B /* Views */,
 				E1E0446B26CC76370024A12B /* Data */,
 				E1E0443426CC74FE0024A12B /* Assets.xcassets */,
@@ -578,6 +581,7 @@
 				E1E044D726CCF06A0024A12B /* OFL.txt in Resources */,
 				E1E044D826CCF06A0024A12B /* Poppins-Regular.ttf in Resources */,
 				E1E044D526CCF06A0024A12B /* Poppins-ExtraBold.ttf in Resources */,
+				E138363626DD89C200B87F88 /* P355472-AppleWatch-hr.csv in Resources */,
 				E1E044D226CCF06A0024A12B /* Poppins-Medium.ttf in Resources */,
 				E1E0443826CC74FE0024A12B /* Preview Assets.xcassets in Resources */,
 				E1E044DE26CCF06A0024A12B /* Poppins-Italic.ttf in Resources */,

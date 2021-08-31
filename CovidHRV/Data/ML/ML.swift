@@ -15,6 +15,19 @@ import HealthKit
 class ML: ObservableObject {
     @Published var mlData = ModelResponse(type: "", predicted: [Double](), actual: [Double](), accuracy: 0.0)
     
+    func importCSV(data: DataFrame, completionHandler: @escaping ([HealthData]) -> Void) {
+        var healthData = [HealthData]()
+       
+        for row in data.rows {
+            
+            let date = ((row["Start_Date"] as! String) + " " + (row["Start_Time"] as! String)).toDate()!
+            healthData.append(HealthData(id: UUID().uuidString, type: .Health, title: HKQuantityTypeIdentifier.heartRate.rawValue, text: HKQuantityTypeIdentifier.heartRate.rawValue, date: date, data: Double(row["Heartrate"] as! Int)))
+            
+            //print(healthData.map{$).data})
+        }
+        
+        completionHandler(healthData)
+    }
     func exportDataToCSV(data: [HealthData], completionHandler: @escaping (Bool) -> Void) {
         var trainingData = DataFrame()
         print("Exporting...")
@@ -27,7 +40,7 @@ class ML: ObservableObject {
         
         let startDates = filteredToNight.map{$0.date.getFormattedDate(format: "yyyy-MM-dd")}
         let startDateColumn = Column(name: "Start_Date", contents: startDates)
-        
+       
         let startTimes = filteredToNight.map{$0.date.getFormattedDate(format: "HH:mm:ss")}
         
         trainingData.append(column: startDateColumn)

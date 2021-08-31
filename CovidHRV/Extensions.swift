@@ -73,4 +73,32 @@ extension Date {
         dateformat.dateFormat = format
         return dateformat.string(from: self)
     }
+    func getTimeOfDay() -> String {
+        let hour = self.get(.hour)
+var timeOfDay = ""
+        switch hour {
+        case 6..<12 : timeOfDay = "Morning"
+        case 12 : timeOfDay = "Noon"
+        case 13..<17 : timeOfDay = "Afternoon"
+        case 17..<22 : timeOfDay = "Evening"
+        default: timeOfDay = "Night"
+        }
+        return timeOfDay
+    }
 }
+extension String {
+
+    func toDate(withFormat format: String = "yyyy-MM-dd HH:mm:ss")-> Date? {
+
+        let dateFormatter = DateFormatter()
+       // dateFormatter.timeZone = TimeZone(identifier: "Asia/Tehran")
+       // dateFormatter.locale = Locale(identifier: "fa-IR")
+        dateFormatter.calendar = Calendar(identifier: .gregorian)
+        dateFormatter.dateFormat = format
+        let date = dateFormatter.date(from: self)
+
+        return date
+
+    }
+}
+
