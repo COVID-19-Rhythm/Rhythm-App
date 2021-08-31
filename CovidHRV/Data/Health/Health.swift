@@ -19,7 +19,7 @@ class Health: ObservableObject {
 //                                                            .heartRate,
 //                                                            .walkingSpeed,
 //                                                            .respiratoryRate, .oxygenSaturation]
-    @Published var readData: [HKQuantityTypeIdentifier] =  [.heartRate]//, .stepCount]
+    @Published var readData: [HKQuantityTypeIdentifier] =  [.stepCount, .respiratoryRate, .oxygenSaturation]//, .stepCount]
     @Published var healthData = [HealthData]()
     @Published var tempHealthData = HealthData(id: UUID().uuidString, type: .Feeling, title: "", text: "", date: Date(), data: 0.0)
     @Published var healthChartData = ChartData(values: [("", 0.0)])
@@ -39,11 +39,14 @@ class Health: ObservableObject {
                 print("Success enabling background delivery for type \(readType2!.identifier)")
                // self.retrieveSleepAnalysis() { sleep in
                     //let sleepingHours = sleep.map{$0.date.get(.hour)}
-                    self.getHealthData(type: .stepCount, dateDistanceType: .Week, dateDistance: self.onboarding ? 30 : 30, endDate: Date()) { value in
+                   
                         //self.getHealthData(type: .heartRate, dateDistanceType: .Week, dateDistance: self.onboarding ? 7 : 30, endDate: Date()) { value in
                   
                     for type in self.readData {
                         self.getHealthData(type: type, dateDistanceType: .Week, dateDistance: self.onboarding ? 30 : 30, endDate: Date()) { value in
+                        }
+                    }
+                            self.getHealthData(type: .heartRate, dateDistanceType: .Week, dateDistance: self.onboarding ? 30 : 30, endDate: Date()) { value in
 //                            let filtered = self.codableRisk.filter {
 //                                return $0.risk > 0
 //                            }
@@ -57,10 +60,11 @@ class Health: ObservableObject {
                                     Today()
                                         .at(hour: Date().get(.hour), minute: Date().get(.minute) + 1)
                                         .schedule(title: "Significant Risk", body: "Your health data may indicate that you may be becoming sick")
-                                }
+                                
+                            }
         //            print(self.average(numbers: self.codableRisk.map{$0.risk}))
                 //}
-                }
+                            }
             }
                     if self.healthData.isEmpty {
                         
@@ -76,8 +80,7 @@ class Health: ObservableObject {
             
            
     }
-    }
-    }
+    
     func convertSleepStartDate(StartDate: Date) -> Date {
 
         let dateFormatter = DateFormatter()
@@ -319,12 +322,14 @@ class Health: ObservableObject {
 //            //}
 //            return (self.risk, codableRisk)
 //        }
-    
+  
     func getRiskScore(bedTime: Int, wakeUpTime: Int, data: [HealthData]) -> (Risk, [CodableRisk]) {
                 //DispatchQueue.main.asyncAfter(deadline: .now() + 30.0) {
                 print("Calculating Risk...")
                 if !healthData.isEmpty {
                 var medianHeartrate = 0.0
+                    var medianRrate = 0.0
+                    var medianOrate = 0.0
                     let url3 = self.getDocumentsDirectory().appendingPathComponent("risk.txt")
                 do {
                     
@@ -358,27 +363,56 @@ class Health: ObservableObject {
                 let filteredToSteps = filteredToNight.filter {
                     return $0.title == HKQuantityTypeIdentifier.stepCount.rawValue
                 }
+                let filteredToO = healthData.filter {
+                        return $0.title == HKQuantityTypeIdentifier.oxygenSaturation.rawValue
+                    }
+                let filteredToR = healthData.filter {
+                        return $0.title == HKQuantityTypeIdentifier.respiratoryRate.rawValue
+                    }
                 let filteredToMoreThanZeroSteps = filteredToSteps.filter {
                     return $0.data != 0
                 }
                 var todayHeartRates = [Double]()
+                    var todayORates = [Double]()
+                    var todayRRates = [Double]()
                 var heartRates = [Double]()
+                    var rRates = [Double]()
+                    var oRates = [Double]()
                 var averageHRPerNight = [Double]()
+                    var averageOPerNight = [Double]()
+                    var averageRPerNight = [Double]()
                 var dates = [Date]()
                 print(healthData.map{$0.date})
-                for day in 0...30 {
+                for day in 0...32 {
                 let filteredToDay = filteredToHeartRate.filter { data in
                     return data.date.get(.day) == day && data.date.get(.month) == Date().get(.month)
                 }
+                    let filteredToDayO = filteredToO.filter { data in
+                        return data.date.get(.day) == day && data.date.get(.month) == Date().get(.month)
+                    }
+                    let filteredToDayR = filteredToR.filter { data in
+                        return data.date.get(.day) == day && data.date.get(.month) == Date().get(.month)
+                    }
+                  print("R.....")
+                    print(filteredToDayR)
                     heartRates = []
-                    print(filteredToDay)
+                    rRates = []
+                    heartRates = []
+                        // print(filteredToDay)
                
                     if !filteredToMoreThanZeroSteps.map({$0.date}).contains(filteredToDay.last?.date ?? Date()) {
                         if !filteredToDay.isEmpty {
-                            if Date().get(.day) == day {
+                            if filteredToR.last?.date.get(.day) == day {
+                                todayRRates.append(filteredToDayR.count == 1 ? filteredToDayR.last?.data ?? 0.0 : average(numbers: filteredToDayR.map{$0.data}))
                                 todayHeartRates.append(filteredToDay.isEmpty ? filteredToDay.last?.data ?? 0.0 : average(numbers: filteredToDay.map{$0.data}))
+                                todayORates.append(filteredToDayO.isEmpty ? filteredToDayO.last?.data ?? 0.0 : average(numbers: filteredToDayO.map{$0.data}))
+                                
+                               
                             } else {
                                 heartRates.append(filteredToDay.isEmpty ? filteredToDay.last?.data ?? 0.0 : average(numbers: filteredToDay.map{$0.data}))
+                                rRates.append(filteredToDayR.isEmpty ? filteredToDayR.last?.data ?? 0.0 : average(numbers: filteredToDayR.map{$0.data}))
+                                
+                               // oRates.append(filteredToDayR.isEmpty ? filteredToDayR.last?.data ?? 0.0 : average(numbers: filteredToDayR.map{$0.data}))
                             }
                         
                             
@@ -388,14 +422,31 @@ class Health: ObservableObject {
                 }
                     if !heartRates.isEmpty {
                         averageHRPerNight.append(average(numbers: heartRates))
+                        averageRPerNight.append(average(numbers: rRates))
+                        averageOPerNight.append(average(numbers: oRates))
                     }
                 }
                print("averageHRPerNight")
                print(averageHRPerNight)
                     if !averageHRPerNight.isEmpty {
                 medianHeartrate = averageHRPerNight.median()
+                        medianRrate = averageRPerNight.median()
+                        medianOrate = averageOPerNight.median()
                     }
-                    let riskScore = self.average(numbers: todayHeartRates) > medianHeartrate + 3 ? 1 : 0
+                
+                    var riskScore = self.average(numbers: todayHeartRates) > medianHeartrate + 3 ? 1.0 : 0.0
+//                    if medianOrate > average(numbers: todayORates) {
+//                        riskScore += 0.5
+//                    }
+                    print("MEDIAN R")
+                    print(medianRrate)
+                    
+                    print("AVG R")
+                    print(average(numbers: todayRRates))
+                    if medianRrate + 2 < average(numbers: todayRRates){
+                        riskScore += 0.5
+                    }
+                 
                     let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "Your health data may indicate you have an illness"), Explanation(image: .heart, explanation: "Calculated from your average heartrate while asleep"),  Explanation(image: .app, explanation: "Alerts may be triggered from other factors than an illness, such as lack of sleep, intoxication, or intense exercise"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis, it's an alert to consult with your doctor")] : [Explanation(image: .checkmark, explanation: "Your health data may indicate you do not have an illness"), Explanation(image: .chartPie, explanation: "Calculated from your average heartrate while asleep"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis or lack thereof, you may still have an illness")]
                 let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: explanation)
                 #warning("Change to a highher value to prevent bad data (because of low amount of data)")
