@@ -37,7 +37,8 @@ class Health: ObservableObject {
                 print("Error enabling background delivery for type \(readType2!.identifier): \(error.debugDescription)")
             } else {
                 print("Success enabling background delivery for type \(readType2!.identifier)")
-                //self.retrieveSleepAnalysis() { _ in
+               // self.retrieveSleepAnalysis() { sleep in
+                    //let sleepingHours = sleep.map{$0.date.get(.hour)}
                     self.getHealthData(type: .stepCount, dateDistanceType: .Week, dateDistance: self.onboarding ? 30 : 30, endDate: Date()) { value in
                         //self.getHealthData(type: .heartRate, dateDistanceType: .Week, dateDistance: self.onboarding ? 7 : 30, endDate: Date()) { value in
                   
@@ -47,7 +48,10 @@ class Health: ObservableObject {
 //                                return $0.risk > 0
 //                            }
 //                            print(filtered)
-                            let riskScore = self.getRiskScore(bedTime: 0, wakeUpTime: 4, data: value).0.risk
+                           
+                            //let riskScore = self.getRiskScore(bedTime: sleepingHours.max() ?? 0, wakeUpTime: sleepingHours.min() ?? 0, data: value).0.risk
+                            
+                            let riskScore = self.getRiskScore(bedTime: 20, wakeUpTime: 4, data: value).0.risk
                             if  riskScore > 0.5 && riskScore != 21.0 {
                                 LocalNotifications.schedule(permissionStrategy: .askSystemPermissionIfNeeded) {
                                     Today()
@@ -346,7 +350,7 @@ class Health: ObservableObject {
                 }
                 
                 let filteredToNight = healthData.filter {
-                    return $0.date.get(.hour) > bedTime && $0.date.get(.hour) < wakeUpTime
+                    return ($0.date.get(.hour) > bedTime && $0.date.get(.hour) < 24) || ($0.date.get(.hour) < wakeUpTime && $0.date.get(.hour) > 0)
                 }
                 let filteredToHeartRate = filteredToNight.filter {
                     return $0.title == HKQuantityTypeIdentifier.heartRate.rawValue
@@ -388,7 +392,9 @@ class Health: ObservableObject {
                 }
                print("averageHRPerNight")
                print(averageHRPerNight)
+                    if !averageHRPerNight.isEmpty {
                 medianHeartrate = averageHRPerNight.median()
+                    }
                     let riskScore = self.average(numbers: todayHeartRates) > medianHeartrate + 3 ? 1 : 0
                     let explanation =  riskScore == 1 ? [Explanation(image: .exclamationmarkCircle, explanation: "Your health data may indicate you have an illness"), Explanation(image: .heart, explanation: "Calculated from your average heartrate while asleep"),  Explanation(image: .app, explanation: "Alerts may be triggered from other factors than an illness, such as lack of sleep, intoxication, or intense exercise"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis, it's an alert to consult with your doctor")] : [Explanation(image: .checkmark, explanation: "Your health data may indicate you do not have an illness"), Explanation(image: .chartPie, explanation: "Calculated from your average heartrate while asleep"), Explanation(image: .stethoscope, explanation: "This is not a medical diagnosis or lack thereof, you may still have an illness")]
                 let risk = Risk(id: UUID().uuidString, risk: CGFloat(riskScore), explanation: explanation)
